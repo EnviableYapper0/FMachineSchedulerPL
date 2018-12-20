@@ -1,6 +1,7 @@
 from pyswip import Prolog
-from machine import Machine
-from factory import Factory
+from . import machine
+from . import factory
+
 
 class MachineCalculator:
 
@@ -8,15 +9,14 @@ class MachineCalculator:
         self.p = Prolog()
         self.p.consult(prolog_file_name)
 
-    def __machines_to_List(self,machines):
-        return "[" + ",".join(machines.to_fact()) + "]"
+    def machines_to_List(self,machines):
+        fact_str = "[" + ",".join(m.to_fact() for m in machines) + "]"
+        return fact_str
 
     def assert_machine(self,machine):
         self.p.assertz(machine.to_fact())
 
     def get_sorted_machines_by_kw(self,machines):
-        machines_list = 
-        
         query_str = "sort_by_kw(...)"
         a = self.p.query(query_str)
         print(list(a))

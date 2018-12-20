@@ -1,5 +1,6 @@
-from machine import Machine
-from machine_calculator import MachineCalculator
+from . import machine
+from . import machine_calculator
+
 
 class Factory:
 
@@ -23,4 +24,4 @@ class Factory:
         m_calc = MachineCalculator()
         no_peak,peak,crit_peak = m_calc.get_sorted_machines_by_peak(sorted_machines)
        
-        return (no_peak,peak, crit_peak)
+        return (no_peak, peak, crit_peak)

@@ -15,8 +15,8 @@ class Machine:
         return self.duration
 
     def to_fact(self):
-        attributes = [self.name,self.kwh,self.duration]
-        return "machine(" + ",".join(attributes) + ")"
+        attributes = [self.name, self.kwh, self.duration]
+        return "machine(" + ",".join(str(att) for att in attributes) + ")"
 
     def __str__(self):
         return self.to_fact()
