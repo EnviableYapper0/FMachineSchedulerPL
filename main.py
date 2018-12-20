@@ -13,7 +13,4 @@ fac.add_machine(m1)
 fac.add_machine(m2)
 fac.add_machine(m3)
 
-m_cal = MachineCalculator("my_lib/main.pl")
-m_fact_str = m_cal.machines_to_List(fac.machines)
-print(m_fact_str)
 
