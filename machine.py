@@ -14,7 +14,10 @@ class Machine:
     def get_duration(self):
         return self.duration
 
-    def __str__(self):
+    def to_fact(self):
         attributes = [self.name,self.kwh,self.duration]
         return "machine(" + ",".join(attributes) + ")"
+
+    def __str__(self):
+        return self.to_fact()
 
