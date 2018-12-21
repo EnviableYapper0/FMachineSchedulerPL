@@ -14,3 +14,4 @@ fac.add_machine(m2)
 fac.add_machine(m3)
 
 
+print(fac.get_sorted_machines_by_kwh())
