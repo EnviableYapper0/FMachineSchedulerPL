@@ -110,6 +110,9 @@ font: 17pt &quot;Georgia&quot;;</string>
        <height>31</height>
       </rect>
      </property>
+     <property name="styleSheet">
+      <string notr="true">color: rgb(1, 1, 1);</string>
+     </property>
     </widget>
     <widget class="QLabel" name="label_machineName">
      <property name="geometry">
@@ -139,6 +142,7 @@ font: 17pt &quot;Georgia&quot;;</string>
      </property>
      <property name="styleSheet">
       <string notr="true">border-color: rgb(9, 9, 9);
+color: rgb(0, 0, 0);
 background-color: rgb(255, 255, 255);</string>
      </property>
     </widget>
@@ -150,6 +154,9 @@ background-color: rgb(255, 255, 255);</string>
        <width>101</width>
        <height>31</height>
       </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">color : rgb(0,0,0)</string>
      </property>
     </widget>
     <widget class="QPushButton" name="button_help">
@@ -204,6 +211,7 @@ background-color: rgb(255, 255, 255);</string>
     </property>
     <property name="styleSheet">
      <string notr="true">border-color: rgb(2, 2, 2);
+color: rgb(0, 0, 0);
 </string>
     </property>
     <property name="frameShape">
