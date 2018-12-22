@@ -40,19 +40,19 @@ class GUI(QMainWindow, form_class):
 
     def initUI(self):
         self.label_openTime.setText("Factory Open Time :")
-        self.label_openTime.setStyleSheet('font: 16pt ".SF NS Text";')
+        self.label_openTime.setStyleSheet('font: 16pt ".SF NS Text"; color: "black"')
 
         self.label_closeTime.setText("Factory Close Time :")
-        self.label_closeTime.setStyleSheet('font: 16pt ".SF NS Text";')
+        self.label_closeTime.setStyleSheet('font: 16pt ".SF NS Text";color: "black"')
 
         self.label_machineName.setText("Machine Name")
-        self.label_machineName.setStyleSheet('font: 20 pt ".SF NS Text";')
+        self.label_machineName.setStyleSheet('font: 20 pt ".SF NS Text";color: "black"')
 
         self.label_durationUnit.setText("Hours")
-        self.label_durationUnit.setStyleSheet('font: 20 pt ".SF NS Text";')
+        self.label_durationUnit.setStyleSheet('font: 20 pt ".SF NS Text";color: "black"')
 
         self.label_currentUnit.setText("KW/h")
-        self.label_currentUnit.setStyleSheet('font: 20 pt ".SF NS Text";')
+        self.label_currentUnit.setStyleSheet('font: 20 pt ".SF NS Text";color: "black"')
 
         self.widget_7.setStyleSheet ('background-color: "white"')
         self.widget_2.setStyleSheet('background-color: "white"')

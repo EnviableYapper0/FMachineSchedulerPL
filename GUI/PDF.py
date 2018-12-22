@@ -11,9 +11,16 @@ from reportlab.pdfgen import canvas
 from fpdf import FPDF
 class PDF():
     def __init__(self):
-        self.pdf = FPDF()
+        pass
 
     def createPDF(self):
+        self.fileName = "temp.pdf"
+        self.c = canvas.Canvas(self.fileName)
+        self.c.setFont('Helvetica', 30)
+        self.c.drawCentredString(300, 700, "KMITL Exam Paper")
+
+
+    '''def createPDF(self):
         self.pdf.add_page()
         self.pdf.set_font('Arial', 'B', 10)
 
@@ -51,7 +58,7 @@ class PDF():
             self.pdf.ln(row_height)
             self.pdf.set_x(15)
 
-        self.pdf.output('file1.pdf','F')
+        self.pdf.output('file1.pdf','F')'''
 
 
 
