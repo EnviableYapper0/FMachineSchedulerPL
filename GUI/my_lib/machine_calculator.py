@@ -16,10 +16,9 @@ class MachineCalculator:
         return m_dict
 
 
-    def readable_results(self, results, variable):
-        readable = list(results)[0][variable]
+    def readable_results(self, results):
         all = []
-        for r in readable:
+        for r in results:
             machine_dict  = self.convert_machine_to_dict(str(r))
             all.append(machine_dict)
         return all
@@ -39,8 +38,10 @@ class MachineCalculator:
         result_var = "X"
         query_str = "machine_sort(" + machines_str + "," + result_var + ")"
         a = self.p.query(query_str)
-        results = self.readable_results(a,result_var)
-        return results
+        results = list(a)[0][result_var]
+        readable_results = self.readable_results(results)
+
+        return readable_results
 
     def get_sorted_machines_by_peak(self, machines):
         machines_str = self.machines_to_List(machines)
@@ -48,22 +49,23 @@ class MachineCalculator:
         no_peak_var = "NP"
         peak_var = "P"
         crit_peak_var = "CP"
-        # print("Query string:")
-        query_str = "classify_machine(" + machines_str + "," + "180,240," + no_peak_var + "," + peak_var + "," + crit_peak_var + ")"
-        # print(query_str)
+
         # classify_machine(List, NonPeakLength, PeakLength, NonPeakList, PeakList, CritialPeakList)
+        query_str = "classify_machine(" + machines_str + "," + "180,240," + no_peak_var + "," + peak_var + "," + crit_peak_var + ")"
         a = self.p.query(query_str)
+
         results = list(a)[0]
+
         no_peak = results[no_peak_var]
         peak = results[peak_var]
         crit_peak = results[crit_peak_var]
-        print(no_peak)
-        print(peak)
-        print(crit_peak)
-        # print("no_peak:")
-        # no_peak_dict = self.readable_results(a,no_peak_var)
-        # print("peak")
-        # peak_dict = self.readable_results(a, peak_var)
-        # print("crit_peak")
-        # crit_peak_dict = self.readable_results(a, crit_peak_var)
-        # print(list(a))
+
+        readable_no_peak = self.readable_results(no_peak)
+        readable_peak = self.readable_results(peak)
+        readable_crit_peak = self.readable_results(crit_peak)
+
+        print(readable_no_peak)
+        print(readable_peak)
+        print(readable_crit_peak)
+
+        return no_peak,peak,crit_peak
