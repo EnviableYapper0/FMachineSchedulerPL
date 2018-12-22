@@ -12,7 +12,7 @@ class MachineCalculator:
     def convert_machine_to_dict(self,machine_functor):
         m_list = machine_functor.replace("machine(","").replace(")","").replace(" ","").split(",")
         m_dict = {"id": int(m_list[0]), "duration": float(m_list[1]), "energy_consumption": float(m_list[2])}
-        print(m_dict)
+
         return m_dict
 
 
@@ -43,7 +43,7 @@ class MachineCalculator:
 
         return readable_results
 
-    def get_sorted_machines_by_peak(self, machines):
+    def get_sorted_machines_by_peak(self, machines, peak_length, no_peak_length):
         machines_str = self.machines_to_List(machines)
         print(machines_str)
         no_peak_var = "NP"
@@ -51,7 +51,9 @@ class MachineCalculator:
         crit_peak_var = "CP"
 
         # classify_machine(List, NonPeakLength, PeakLength, NonPeakList, PeakList, CritialPeakList)
-        query_str = "classify_machine(" + machines_str + "," + "180,240," + no_peak_var + "," + peak_var + "," + crit_peak_var + ")"
+        query_str = "classify_machine(" + machines_str + "," + str(no_peak_length) + "," + str(peak_length)\
+                    + "," + no_peak_var + "," + peak_var + "," + crit_peak_var + ")"
+        print(query_str)
         a = self.p.query(query_str)
 
         results = list(a)[0]

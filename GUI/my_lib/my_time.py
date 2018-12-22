@@ -11,8 +11,6 @@ def distance_between_time_in_minute(time_f1, time_f2):
     t1_str = float_to_timestr(time_f1)
     t2_str = float_to_timestr(time_f2)
 
-    print(t1_str,t2_str)
-
     fmt = "%H.%M"
     d1 = datetime.strptime(t1_str,fmt)
     d2 = datetime.strptime(t2_str,fmt)
@@ -22,6 +20,4 @@ def distance_between_time_in_minute(time_f1, time_f2):
     else:
         diff = d1 - d2
 
-    print(diff.seconds // 60)
-
-    return diff.seconds
+    return diff.seconds // 60

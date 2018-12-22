@@ -175,7 +175,8 @@ class GUI(QMainWindow, form_class):
 
         self.set_factory_time()
         for a in self.factory.machines:
-            print(a, end=", ")
+            # print(a, end=", ")
+            pass
 
         self.factory.get_sorted_machines_by_peak()
         # print(sorted_list)
