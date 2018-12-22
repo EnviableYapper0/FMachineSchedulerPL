@@ -1,6 +1,6 @@
-machine2
+M1
 2.0
+400.0
+M2
 2.0
-jnblknknlkmlml;
-1.0
-1.0
+1000.0

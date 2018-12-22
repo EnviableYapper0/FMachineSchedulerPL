@@ -39,9 +39,6 @@ class GUI(QMainWindow, form_class):
         self.listWidget_machine.horizontalScrollBar().setEnabled(False)
 
         self.factory = Factory()
-        self.factory.add_machine(Machine("a",2.00,10.00))
-        self.factory.add_machine(Machine("b",4.00,50.00))
-        self.factory.add_machine(Machine("c",3.30,100.00))
 
         self.sWindow=QuestionWindow()
         self.pdf=PDF()
@@ -117,8 +114,8 @@ class GUI(QMainWindow, form_class):
                 not machineName.isspace() and \
                 durationTime != 0 and durationTime <=24.00 and \
                 currentKWh.isnumeric() and currentKWh != "0" :
-            for list in self.factory.machines:
-                if list.name == machineName:
+            for machine in self.factory.get_machine_list():
+                if machine.name == machineName:
                     self.label_caution.setText("﻿*This machine already exists")
                     self.label_caution.setVisible(True)
                     self.checkDuplicate=1
@@ -127,7 +124,7 @@ class GUI(QMainWindow, form_class):
                 self.factory.add_machine(Machine(machineName, durationTime, currentKWh))
                 self.label_caution.setVisible(False)
                 self.storage.saveTime(self.time_openTime.value(),self.time_closeTime.value())
-                self.storage.save(self.listMachine)
+                self.storage.save(self.factory.get_machine_list())
                 self.displayMachine()
                 self.enableExecute()
 
@@ -193,7 +190,7 @@ class GUI(QMainWindow, form_class):
 
         self.all_file=self.storage.read()
         self.listWidget_machine.clear()
-        self.listMachine.clear()
+        self.factory.get_machine_list().clear()
         round=1
         if(len(self.all_file)!=0):
             self.enableExecute()
@@ -204,7 +201,7 @@ class GUI(QMainWindow, form_class):
                 self.temp_duration = ''.join(each_file.split())
             elif (round == 3):
                 self.temp_current = ''.join(each_file.split())
-                self.listMachine.append(Machine(self.temp_machine,self.temp_duration,self.temp_current))
+                self.factory.add_machine(Machine(self.temp_machine,self.temp_duration,self.temp_current))
                 round=0
             round+=1
         self.displayMachine()
@@ -222,18 +219,18 @@ class GUI(QMainWindow, form_class):
         for a in self.factory.machines:
             # print(a, end=", ")
             pass
-        self.factory.get_sorted_machines_by_peak()
+        no_peak, peak, crit_peak = self.factory.get_sorted_machines_by_peak()
         # print(sorted_list)
 
-        # self.sendPDF()
+        self.sendPDF(no_peak,peak,crit_peak)
 
-    def sendPDF(self):
+    def sendPDF(self,no_peak,peak,crit_peak):
         self.close_time = float(self.time_closeTime.value())
         self.open_time = float(self.time_openTime.value())
 
         if(self.time_closeTime.value()!=0 and self.time_openTime.value()!=0 and  self.open_time < self.close_time):
             self.storage.saveTime(self.time_openTime.value(), self.time_closeTime.value())
-            self.pdf.createPDF()
+            self.pdf.createPDF(no_peak,peak,crit_peak,self.factory)
             QMessageBox.information(self,"Result","PDF File has been saved in your folder")
         elif( self.open_time >= self.close_time):
             QMessageBox.warning(self, "Caution", "Factory close time must be more than the open time")
@@ -256,8 +253,8 @@ class GUI(QMainWindow, form_class):
 
     def deleteMachine(self):
         index = self.listWidget_machine.currentRow()
-        del self.listMachine[index]
-        self.storage.save(self.listMachine)
+        self.factory.remove_machine(index)
+        self.storage.save(self.factory.get_machine_list())
         self.storage.saveTime(self.time_openTime.value(), self.time_closeTime.value())
         self.displayMachine()
         self.button_trash.setEnabled(False)

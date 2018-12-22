@@ -25,8 +25,10 @@ class Factory:
         self.machines.append(machine.id)
         self.machine_id_map[machine.id] = machine
 
-    def remove_machine(self, id):
-        pass
+    def remove_machine(self, index):
+        id = self.machines[index]
+        del self.machines[index]
+        del self.machine_id_map[id]
 
     def get_machine_by_id(self, id):
         return self.machine_id_map[id]

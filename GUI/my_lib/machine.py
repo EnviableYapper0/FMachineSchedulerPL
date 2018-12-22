@@ -1,11 +1,12 @@
 import uuid
+from . import my_time as mt
 
 class Machine(object):
     def __init__(self, name, duration, energy_consumption):
         self.id = uuid.uuid4().node
         self.name = name
-        self.duration = duration
-        self.energy_consumption = energy_consumption
+        self.duration = float(duration)
+        self.energy_consumption = float(energy_consumption)
 
     def get_duration_str(self):
         return str(self.duration) + " Hrs."
@@ -16,14 +17,14 @@ class Machine(object):
     def get_name(self):
         return self.name
 
-    def get_kwh(self):
+    def get_energy_consumption(self):
         return self.energy_consumption
 
     def get_duration(self):
         return self.duration
 
     def get_duration_minutes(self):
-        return int(self.duration) * 60 + int((self.duration - int(self.duration)) * 100)
+        return mt.float_to_minute(self.duration)
 
     def to_fact(self):
         attributes = [self.id, self.get_duration_minutes(), self.energy_consumption]

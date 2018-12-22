@@ -13,8 +13,8 @@ class Storage():
         with open(self.filename, "w") as self.f :
             for eachMachine in listMachine:
                 self.f.write(eachMachine.name+"\n")
-                self.f.write(eachMachine.get_duration()+"\n")
-                self.f.write(eachMachine.get_energy()+"\n")
+                self.f.write(str(eachMachine.get_duration())+"\n")
+                self.f.write(str(eachMachine.get_energy_consumption())+"\n")
 
             self.f.close()
     def readTime(self):
@@ -22,9 +22,18 @@ class Storage():
         t_read=t.readlines()
         t.close()
         return t_read
+
     def read(self):
-        f=open(self.filename,"r")
-        f_read=f.readlines()
-        f.close()
+        try:
+            f=open(self.filename,"r")
+            f_read=f.readlines()
+            f.close()
+        except FileNotFoundError:
+            f=open(self.filename,"w")
+            f.close()
+
+            f = open(self.filename, "r")
+            f_read = f.readlines()
+            f.close()
 
         return f_read
