@@ -5,6 +5,7 @@ from PyQt5.QtWidgets import *
 from QuestionWindow import QuestionWindow
 from machine import Machine
 from PDF import PDF
+from Storage import Storage
 
 form_class = uic.loadUiType("mainwindow.ui")[0]
 form_class2 =uic.loadUiType("coverPage.ui")[0]
@@ -38,6 +39,9 @@ class GUI(QMainWindow, form_class):
 
         self.sWindow=QuestionWindow()
         self.pdf=PDF()
+        self.storage=Storage()
+        self.display_initial_Machine()
+
 
     def initUI(self):
         self.label_openTime.setText("Factory Open Time :")
@@ -62,8 +66,8 @@ class GUI(QMainWindow, form_class):
         self.label_caution.setStyleSheet('color: rgb(255, 0, 10); font: 10pt ".SF NS Text";')
 
         self.inputDuration.setRange(0,24)
-        self.time_closeTime.setRange(0,24)
-        self.time_openTime.setRange(0, 24)
+        self.time_closeTime.setRange(0,23.59)
+        self.time_openTime.setRange(0, 23.59)
 
         self.current_pic = QPixmap('image/current.png')
         self.duration_pic = QPixmap('image/duration.png')
@@ -94,9 +98,9 @@ class GUI(QMainWindow, form_class):
         self.button_help.setIconSize(QtCore.QSize(20, 20))
 
 
-        self.listWidget_machine.currentItemChanged.connect(self.enableTrash)
-        #self.listWidget_machine.setStyleSheet("QListView:item{border:1px}")
 
+
+        self.listWidget_machine.currentItemChanged.connect(self.enableTrash)
         self.show()
 
     def addMachine(self):
@@ -118,6 +122,8 @@ class GUI(QMainWindow, form_class):
             if(self.checkDuplicate==0):
                 self.listMachine.append(Machine(machineName, durationTime, currentKWh))
                 self.label_caution.setVisible(False)
+                self.storage.saveTime(self.time_openTime.value(),self.time_closeTime.value())
+                self.storage.save(self.listMachine)
                 self.displayMachine()
                 self.enableExecute()
 
@@ -131,8 +137,11 @@ class GUI(QMainWindow, form_class):
             self.button_Execute.setEnabled(False)
         for eachMachine in self.listMachine:
             self.hlayout = QHBoxLayout()
+            self.machine_image= QLabel()
+            self.image=QPixmap("image/machine.png");
+            self.machine_image.setPixmap(self.image);
             self.machine = QLabel()
-            self.machine.setFixedWidth(230)
+            self.machine.setFixedWidth(190)
             self.machine.setText(eachMachine.name)
             self.duration = QLabel()
             self.duration.setFixedWidth(85)
@@ -141,9 +150,11 @@ class GUI(QMainWindow, form_class):
             self.current.setFixedWidth(145)
             self.current.setText(eachMachine.get_energy_consumption_str())
 
+            self.hlayout.addWidget(self.machine_image)
             self.hlayout.addWidget(self.machine)
             self.hlayout.addWidget(self.duration)
             self.hlayout.addWidget(self.current)
+
 
             self.hlayout.addStretch()
             self.hlayout.setSizeConstraint(QLayout.SetFixedSize)
@@ -156,15 +167,58 @@ class GUI(QMainWindow, form_class):
             self.listWidget_machine.addItem(itemN)
             self.listWidget_machine.setItemWidget(itemN, self.widget)
             #self.listWidget_machine.setStyleSheet("QListWidget:item { border: 2px}")
+    def display_factory_time(self):
+        self.timeFile = self.storage.readTime()
+        count_t = 1
+        for each_time in self.timeFile:
+            self.getTime = ''.join(each_time.split())
+            if (count_t == 1):
+                if len(each_time) != 0:
+                    self.time_openTime.setValue(float(self.getTime))
+                else:
+                    pass
+                count_t += 1
+            else:
+                self.time_closeTime.setValue(float(self.getTime))
+
+    def display_initial_Machine(self):
+        self.display_factory_time()
+
+        self.all_file=self.storage.read()
+        self.listWidget_machine.clear()
+        self.listMachine.clear()
+        round=1
+        if(len(self.all_file)!=0):
+            self.enableExecute()
+        for each_file in self.all_file:
+            if(round==1):
+                self.temp_machine = ''.join(each_file.split())
+            elif (round == 2):
+                self.temp_duration = ''.join(each_file.split())
+            elif (round == 3):
+                self.temp_current = ''.join(each_file.split())
+                self.listMachine.append(Machine(self.temp_machine,self.temp_duration,self.temp_current))
+                round=0
+            round+=1
+        self.displayMachine()
+
+
 
     def sendPDF(self):
         self.text_machineName.setPlainText("")
         self.inputDuration.setValue(0.0)
         self.inputCurrent.setPlainText("")
+        self.open_time= float(self.time_closeTime.value())
+        self.close_time = float(self.time_openTime.value())
 
-        if(self.time_closeTime.value()!=0 and self.time_openTime.value()!=0):
+
+        if(self.time_closeTime.value()!=0 and self.time_openTime.value()!=0 and  self.open_time> self.close_time):
+            self.storage.saveTime(self.time_openTime.value(), self.time_closeTime.value())
             self.pdf.createPDF()
             QMessageBox.information(self,"Result","PDF File has been saved in your folder")
+        elif( self.open_time < self.close_time):
+            QMessageBox.warning(self, "Caution", "Factory close time must be more than the open time")
+
         else :
             QMessageBox.warning(self, "Caution", "Please input the open and close time of factory")
 
@@ -181,6 +235,8 @@ class GUI(QMainWindow, form_class):
     def deleteMachine(self):
         index = self.listWidget_machine.currentRow()
         del self.listMachine[index]
+        self.storage.save(self.listMachine)
+        self.storage.saveTime(self.time_openTime.value(), self.time_closeTime.value())
         self.displayMachine()
         self.button_trash.setEnabled(False)
 

@@ -12,14 +12,19 @@ class QuestionWindow():
 
     def createSecondWindow(self):
         self.questionWindow.setWindowTitle("Electricity Charge Table")
-        self.questionWindow.setFixedSize(600, 200)
+        self.questionWindow.setFixedSize(600, 400)
         self.voltageLabel = QLabel(self.questionWindow)
-        self.voltageLabel.setGeometry(47, 10, 600, 150)
+        self.voltageLabel.setGeometry(98, 6, 600, 150)
         self.voltagePicture = QPixmap('image/table.png')
         self.voltageLabel.setPixmap(self.voltagePicture)
 
+        self.graph_label = QLabel(self.questionWindow)
+        self.graph_label.setGeometry(98, 145, 600, 170)
+        self.graphPicture = QPixmap('image/graph.png')
+        self.graph_label.setPixmap(self.graphPicture)
+
         self.button_close = QPushButton(self.questionWindow)
-        self.button_close.setGeometry(250,120,100,100)
+        self.button_close.setGeometry(250,300,100,100)
 
         close = QtGui.QPixmap('image/close1.png')
         self.button_close.setStyleSheet('border:0px')
