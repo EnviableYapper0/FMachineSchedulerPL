@@ -1,36 +1,39 @@
-machine_time_less_than(machine(_, X, _), Y):-
-    X =< Y.
+machine_time_less_than(machine(_,_,X), Length):-
+    X =< Length.
 
-get_time(machine(_,X,_), X).
+get_time(machine(_,_,X), X).
 
-classify_not_peak([H|T], Y1, Y2, A, A1, B, C):-
+classify_not_peak([H|T], NonPeakLength, PeakLength, NonPeakList, NonPeakAcc, PeakList, CritialPeakList):-
     get_time(H, X),
-    machine_time_less_than(H, Y1),
-    !,    
-
-    Y is Y1 - X,
-    append(A1, [H], Z),
-    classify_not_peak(T, Y, Y2, A, Z, B, C).
-
-classify_not_peak([machine(M, X, N)|T], Y1, Y2, A, A1, B, C):-
-    append(A1, [machine(M, Y1, N)], A),
-    append([machine(M, Z, N)], T, L),
-    Z is X - Y1,
-    classify_peak(L, Y2, B, [], C).
-
-classify_peak([H|T], Y2, B, B1, C):-
-    get_time(H, X),
-    machine_time_less_than(H, Y2),
+    machine_time_less_than(H, NonPeakLength),
     !,
-    Y is Y2 - X,
-    append(B1, [H], Z),
-    classify_peak(T, Y, B, Z, C).
 
-classify_peak([machine(M, X, N)|T], Y2, B, B1, [machine(M, Z, N)]):-
-    append(B1, [machine(M, Y2, N)], B),
-    % append([machine(M, Z, N)], T, C]),
-    print(T),
-    Z is X - Y2.
+    NewLength is NonPeakLength - X,
+    append(NonPeakAcc, [H], NewAcc),
+    classify_not_peak(T, NewLength, PeakLength, NonPeakList, NewAcc, PeakList, CritialPeakList).
 
-classify_machine(X, Y1, Y2, A, B, C):-
-    classify_not_peak(X, Y1, Y2, A, [], B, C).
+classify_not_peak([machine(MID, KWh, X)|T], NonPeakLength, PeakLength, NonPeakList, NonPeakAcc, PeakList, CritialPeakList):-
+    print(a),
+    append(NonPeakAcc, [machine(MID, KWh, NonPeakLength)], NonPeakList),
+    print(a),
+    append([machine(MID, KWh, NewMachineLength)], T, L),
+    NewMachineLength is X - NonPeakLength,
+    classify_peak(L, PeakLength, PeakList, [], CritialPeakList).
+
+classify_peak([H|T], PeakLength, PeakList, PeakAcc, CritialPeakList):-
+    get_time(H, X),
+    machine_time_less_than(H, PeakLength),
+    !,
+
+    print(b),
+    NewLength is PeakLength - X,
+    append(PeakAcc, [H], NewAcc),
+    classify_peak(T, NewLength, PeakList, NewAcc, CritialPeakList).
+
+classify_peak([machine(MID, KWh, X)|T], PeakLength, PeakList, PeakAcc, [machine(MID, KWh, NewMachineLength)|T]):-
+    append(PeakAcc, [machine(MID, KWh, PeakLength)], PeakList),
+    print(c),
+    NewMachineLength is X - PeakLength.
+
+classify_machine(List, NonPeakLength, PeakLength, NonPeakList, PeakList, CritialPeakList):-
+    classify_not_peak(List, NonPeakLength, PeakLength, NonPeakList, [], PeakList, CritialPeakList).
