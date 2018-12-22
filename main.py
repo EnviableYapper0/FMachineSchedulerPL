@@ -1,7 +1,5 @@
-import __init__
-from my_lib import Machine
-from my_lib import Factory
-from my_lib import MachineCalculator
+from GUI.my_lib import Factory
+from GUI.my_lib import Machine
 
 m1 = Machine(1,40,300)
 m2 = Machine(2,50,200)
