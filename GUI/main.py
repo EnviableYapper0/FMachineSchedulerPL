@@ -3,8 +3,9 @@ from PyQt5 import QtCore, QtGui, uic
 from PyQt5.QtGui import QIcon, QPixmap
 from PyQt5.QtWidgets import *
 from QuestionWindow import QuestionWindow
-from machine import Machine
+# from machine import Machine
 from my_lib.machine import Machine
+from my_lib.factory import Factory
 from PDF import PDF
 
 form_class = uic.loadUiType("mainwindow.ui")[0]
@@ -28,16 +29,21 @@ class GUI(QMainWindow, form_class):
         self.button_addMachine.clicked.connect(self.addMachine)
         self.button_trash.clicked.connect(self.deleteMachine)
         self.button_help.clicked.connect(self.showQuery)
-        self.button_Execute.clicked.connect(self.sendPDF)
+        self.button_Execute.clicked.connect(self.calculateValue)
         self.button_backCover.clicked.connect(self.backCover)
         self.button_trash.setEnabled(False)
         self.button_Execute.setEnabled(False)
         self.label_caution.setVisible(False)
-        self.listMachine = []
         self.listWidget_machine.horizontalScrollBar().setEnabled(False)
+
+        self.factory = Factory()
+        self.factory.add_machine(Machine("A",2.00,10.00))
+        self.factory.add_machine(Machine("B",4.00,50.00))
+        self.factory.add_machine(Machine("C",3.30,100.00))
 
         self.sWindow=QuestionWindow()
         self.pdf=PDF()
+        self.displayMachine()
 
     def initUI(self):
         self.label_openTime.setText("Factory Open Time :")
@@ -98,6 +104,7 @@ class GUI(QMainWindow, form_class):
         self.listWidget_machine.currentItemChanged.connect(self.enableTrash)
         #self.listWidget_machine.setStyleSheet("QListView:item{border:1px}")
 
+
         self.show()
 
     def addMachine(self):
@@ -110,25 +117,26 @@ class GUI(QMainWindow, form_class):
                 not machineName.isspace() and \
                 durationTime != 0 and durationTime <=24.00 and \
                 currentKWh.isnumeric():
-            for list in self.listMachine:
+            for list in self.factory.machines:
                 if list.name == machineName:
                     self.label_caution.setText("﻿*This machine already exists")
                     self.label_caution.setVisible(True)
                     self.checkDuplicate=1
                     return
             if(self.checkDuplicate==0):
-                self.listMachine.append(Machine(machineName, durationTime, currentKWh))
+                self.factory.add_machine(Machine(machineName, durationTime, currentKWh))
                 self.label_caution.setVisible(False)
                 self.displayMachine()
-                self.enableExecute()
         else :
             self.label_caution.setVisible(True)
 
     def displayMachine(self):
         self.listWidget_machine.clear()
-        if(len(self.listMachine) == 0) :
-            self.button_Execute.setEnabled(False)
-        for eachMachine in self.listMachine:
+        if(len(self.factory.machines) == 0) :
+            self.disableExecute()
+        else:
+            self.enableExecute()
+        for eachMachine in self.factory.machines:
             self.hlayout = QHBoxLayout()
             self.machine = QLabel()
             self.machine.setFixedWidth(230)
@@ -156,12 +164,23 @@ class GUI(QMainWindow, form_class):
             self.listWidget_machine.setItemWidget(itemN, self.widget)
             #self.listWidget_machine.setStyleSheet("QListWidget:item { border: 2px}")
 
-    def sendPDF(self):
+    def set_factory_time(self):
+        self.factory.set_time(self.time_openTime.value(), self.time_closeTime.value())
+
+    def calculateValue(self):
         self.text_machineName.setPlainText("")
         self.inputDuration.setValue(0.0)
         self.inputCurrent.setPlainText("")
-        #self.listWidget_machine.clear()
 
+        self.set_factory_time()
+        for a in self.factory.machines:
+            print(a, end=", ")
+
+
+        # self.sendPDF()
+
+    def sendPDF(self):
+        #self.listWidget_machine.clear()
         if(self.time_closeTime.value()!=0 and self.time_openTime.value()!=0):
             self.pdf.createPDF()
             #!!!! save to other path
@@ -175,6 +194,9 @@ class GUI(QMainWindow, form_class):
 
     def enableExecute(self):
         self.button_Execute.setEnabled(True)
+
+    def disableExecute(self):
+        self.button_Execute.setEnabled(False)
 
     def enableTrash(self):
         self.button_trash.setEnabled(True)

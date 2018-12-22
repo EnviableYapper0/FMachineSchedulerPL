@@ -9,6 +9,10 @@ class Factory:
         self.close_time = close_time
         self.machines = []
 
+    def set_time(self,open_time,close_time):
+        self.open_time = open_time
+        self.close_time = close_time
+
     def add_machine(self, machine):
         self.machines.append(machine)
 
