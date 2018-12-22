@@ -14,7 +14,7 @@ class GUI(QMainWindow, form_class):
     def __init__(self):
         print("enter")
         QMainWindow.__init__(self)
-
+        self.setFixedSize(860,600)
         p = QtGui.QPalette()
         brush = QtGui.QBrush(QtCore.Qt.white, QtGui.QPixmap('image/background.png'))
         p.setBrush(QtGui.QPalette.Active, QtGui.QPalette.Window, brush)
@@ -120,7 +120,9 @@ class GUI(QMainWindow, form_class):
                 self.label_caution.setVisible(False)
                 self.displayMachine()
                 self.enableExecute()
+
         else :
+            self.label_caution.setText("﻿* Please check your input again")
             self.label_caution.setVisible(True)
 
     def displayMachine(self):
@@ -159,7 +161,6 @@ class GUI(QMainWindow, form_class):
         self.text_machineName.setPlainText("")
         self.inputDuration.setValue(0.0)
         self.inputCurrent.setPlainText("")
-        #self.listWidget_machine.clear()
 
         if(self.time_closeTime.value()!=0 and self.time_openTime.value()!=0):
             self.pdf.createPDF()
@@ -206,6 +207,7 @@ class Cover(QMainWindow,form_class2):
         self.button_enterProgram.clicked.connect(self.enterMain)
         self.g = GUI()
         self.g.hide()
+        self.g.setWindowTitle('Factory Machine Scheduler')
 
     def enterMain(self):
 
@@ -221,6 +223,8 @@ if __name__ == "__main__":
     app = QApplication(sys.argv)
     w = Cover()
     w.setWindowTitle('Factory Machine Scheduler')
+    w.setFixedSize(860,600)
+
 
     app.setAttribute(QtCore.Qt.AA_DisableHighDpiScaling)
 
