@@ -3,7 +3,9 @@ from PyQt5 import QtCore, QtGui, uic
 from PyQt5.QtGui import QIcon, QPixmap
 from PyQt5.QtWidgets import *
 from QuestionWindow import QuestionWindow
-from machine import Machine
+# from machine import Machine
+from my_lib.machine import Machine
+from my_lib.factory import Factory
 from PDF import PDF
 from Storage import Storage
 
@@ -30,15 +32,17 @@ class GUI(QMainWindow, form_class):
         self.button_addMachine.clicked.connect(self.addMachine)
         self.button_trash.clicked.connect(self.deleteMachine)
         self.button_help.clicked.connect(self.showQuery)
-        self.button_Execute.clicked.connect(self.sendPDF)
+        self.button_Execute.clicked.connect(self.calculateValue)
         self.button_trash.setEnabled(False)
         self.button_Execute.setEnabled(False)
         self.label_caution.setVisible(False)
-        self.listMachine = []
         self.listWidget_machine.horizontalScrollBar().setEnabled(False)
+
+        self.factory = Factory()
 
         self.sWindow=QuestionWindow()
         self.pdf=PDF()
+
         self.storage=Storage()
         self.display_initial_Machine()
 
@@ -97,9 +101,6 @@ class GUI(QMainWindow, form_class):
         self.button_help.setIcon(QIcon(question))
         self.button_help.setIconSize(QtCore.QSize(20, 20))
 
-
-
-
         self.listWidget_machine.currentItemChanged.connect(self.enableTrash)
         self.show()
 
@@ -113,17 +114,17 @@ class GUI(QMainWindow, form_class):
                 not machineName.isspace() and \
                 durationTime != 0 and durationTime <=24.00 and \
                 currentKWh.isnumeric() and currentKWh != "0" :
-            for list in self.listMachine:
-                if list.name == machineName:
+            for machine in self.factory.get_machine_list():
+                if machine.name == machineName:
                     self.label_caution.setText("﻿*This machine already exists")
                     self.label_caution.setVisible(True)
                     self.checkDuplicate=1
                     return
             if(self.checkDuplicate==0):
-                self.listMachine.append(Machine(machineName, durationTime, currentKWh))
+                self.factory.add_machine(Machine(machineName, durationTime, currentKWh))
                 self.label_caution.setVisible(False)
                 self.storage.saveTime(self.time_openTime.value(),self.time_closeTime.value())
-                self.storage.save(self.listMachine)
+                self.storage.save(self.factory.get_machine_list())
                 self.displayMachine()
                 self.enableExecute()
 
@@ -133,9 +134,12 @@ class GUI(QMainWindow, form_class):
 
     def displayMachine(self):
         self.listWidget_machine.clear()
-        if(len(self.listMachine) == 0) :
-            self.button_Execute.setEnabled(False)
-        for eachMachine in self.listMachine:
+        if(len(self.factory.machines) == 0) :
+            self.disableExecute()
+        else:
+            self.enableExecute()
+        for machine_id in self.factory.machines:
+            eachMachine = self.factory.get_machine_by_id(machine_id)
             self.hlayout = QHBoxLayout()
             self.machine_image= QLabel()
             self.image=QPixmap("image/machine.png");
@@ -186,7 +190,7 @@ class GUI(QMainWindow, form_class):
 
         self.all_file=self.storage.read()
         self.listWidget_machine.clear()
-        self.listMachine.clear()
+        self.factory.get_machine_list().clear()
         round=1
         if(len(self.all_file)!=0):
             self.enableExecute()
@@ -197,26 +201,38 @@ class GUI(QMainWindow, form_class):
                 self.temp_duration = ''.join(each_file.split())
             elif (round == 3):
                 self.temp_current = ''.join(each_file.split())
-                self.listMachine.append(Machine(self.temp_machine,self.temp_duration,self.temp_current))
+                self.factory.add_machine(Machine(self.temp_machine,self.temp_duration,self.temp_current))
                 round=0
             round+=1
         self.displayMachine()
 
 
 
-    def sendPDF(self):
+    def set_factory_time(self):
+        self.factory.set_time(self.time_openTime.value(), self.time_closeTime.value())
+
+    def calculateValue(self):
         self.text_machineName.setPlainText("")
         self.inputDuration.setValue(0.0)
         self.inputCurrent.setPlainText("")
-        self.open_time= float(self.time_closeTime.value())
-        self.close_time = float(self.time_openTime.value())
+        self.set_factory_time()
+        for a in self.factory.machines:
+            # print(a, end=", ")
+            pass
+        no_peak, peak, crit_peak = self.factory.get_sorted_machines_by_peak()
+        # print(sorted_list)
 
+        self.sendPDF(no_peak,peak,crit_peak)
 
-        if(self.time_closeTime.value()!=0 and self.time_openTime.value()!=0 and  self.open_time> self.close_time):
+    def sendPDF(self,no_peak,peak,crit_peak):
+        self.close_time = float(self.time_closeTime.value())
+        self.open_time = float(self.time_openTime.value())
+
+        if(self.time_closeTime.value()!=0 and self.time_openTime.value()!=0 and  self.open_time < self.close_time):
             self.storage.saveTime(self.time_openTime.value(), self.time_closeTime.value())
-            self.pdf.createPDF()
+            self.pdf.createPDF(no_peak,peak,crit_peak,self.factory)
             QMessageBox.information(self,"Result","PDF File has been saved in your folder")
-        elif( self.open_time < self.close_time):
+        elif( self.open_time >= self.close_time):
             QMessageBox.warning(self, "Caution", "Factory close time must be more than the open time")
 
         else :
@@ -229,21 +245,19 @@ class GUI(QMainWindow, form_class):
     def enableExecute(self):
         self.button_Execute.setEnabled(True)
 
+    def disableExecute(self):
+        self.button_Execute.setEnabled(False)
+
     def enableTrash(self):
         self.button_trash.setEnabled(True)
 
     def deleteMachine(self):
         index = self.listWidget_machine.currentRow()
-        del self.listMachine[index]
-        self.storage.save(self.listMachine)
+        self.factory.remove_machine(index)
+        self.storage.save(self.factory.get_machine_list())
         self.storage.saveTime(self.time_openTime.value(), self.time_closeTime.value())
         self.displayMachine()
         self.button_trash.setEnabled(False)
-
-
-
-
-
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)

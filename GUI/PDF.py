@@ -16,7 +16,15 @@ class PDF():
     def __init__(self):
         self.pdf=FPDF()
 
-    def createPDF(self):
+    def convert_to_data(self, no_peak, peak, crit_peak, factory):
+        data = []
+
+        open_time = factory.open_time
+        close_time = factory.close_time
+
+        
+
+    def createPDF(self,no_peak, peak, crit_peak, factory):
         self.date_time=datetime.now().strftime('%Y-%m-%d %H:%M:%S')
         self.pdf.add_page()
         self.pdf.set_font('Arial', 'B', 10)
