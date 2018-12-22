@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>MainWindow</class>
- <widget class="QMainWindow" name="MainWindow">
+ <class>FactoryMachineScheduler</class>
+ <widget class="QMainWindow" name="FactoryMachineScheduler">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
     <width>868</width>
-    <height>588</height>
+    <height>696</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -333,19 +333,6 @@ font: 16pt &quot;Georgia&quot;;</string>
       <width>120</width>
       <height>80</height>
      </rect>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="button_backCover">
-    <property name="geometry">
-     <rect>
-      <x>340</x>
-      <y>510</y>
-      <width>131</width>
-      <height>41</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>back</string>
     </property>
    </widget>
   </widget>

@@ -3,12 +3,19 @@ class Machine(object):
         self.name = name
         self.duration = duration
         self.energy_consumption = energy_consumption
-
     def get_duration_str(self):
         return str(self.duration) + " Hrs."
 
+    def get_duration(self):
+        return str(self.duration)
+
     def get_energy_consumption_str(self):
         return str(self.energy_consumption) + " KW/h"
+
+    def get_energy(self):
+        print("duration"+str(self.duration))
+        return str(self.duration)
+
 
     def get_name(self):
         return self.name
