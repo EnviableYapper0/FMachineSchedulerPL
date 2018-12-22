@@ -7,6 +7,7 @@ import os
 import sys
 import fpdf
 import webbrowser
+from reportlab.pdfgen import canvas
 from fpdf import FPDF
 class PDF():
     def __init__(self):
