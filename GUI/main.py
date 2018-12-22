@@ -39,6 +39,27 @@ class GUI(QMainWindow, form_class):
         self.pdf=PDF()
 
     def initUI(self):
+        self.label_openTime.setText("Factory Open Time :")
+        self.label_openTime.setStyleSheet('font: 16pt "Georgia";')
+
+        self.label_closeTime.setText("Factory Close Time :")
+        self.label_closeTime.setStyleSheet('font: 16pt "Georgia";')
+
+        self.label_machineName.setText("Machine Name")
+        self.label_machineName.setStyleSheet('font: 20 pt "Georgia";')
+
+        self.label_durationUnit.setText("Hours")
+        self.label_durationUnit.setStyleSheet('font: 20 pt "Georgia";')
+
+        self.label_currentUnit.setText("KW/h")
+        self.label_currentUnit.setStyleSheet('font: 20 pt "Georgia";')
+
+        self.widget_7.setStyleSheet ('background-color: "white"')
+        self.widget_2.setStyleSheet('background-color: "white"')
+
+        self.label_caution.setText("﻿* Please check your input again")
+        self.label_caution.setStyleSheet('color: rgb(255, 0, 10); font: 10pt ".SF NS Text";')
+
         self.inputDuration.setRange(0,24)
         self.time_closeTime.setRange(0,24)
         self.time_openTime.setRange(0, 24)
@@ -176,6 +197,7 @@ class Cover(QMainWindow,form_class2):
     def initUI(self):
         self.button_enterProgram.clicked.connect(self.enterMain)
         self.g = GUI()
+        self.g.hide()
 
     def enterMain(self):
 
