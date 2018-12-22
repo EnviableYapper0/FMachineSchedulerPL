@@ -37,9 +37,9 @@ class GUI(QMainWindow, form_class):
         self.listWidget_machine.horizontalScrollBar().setEnabled(False)
 
         self.factory = Factory()
-        self.factory.add_machine(Machine("A",2.00,10.00))
-        self.factory.add_machine(Machine("B",4.00,50.00))
-        self.factory.add_machine(Machine("C",3.30,100.00))
+        self.factory.add_machine(Machine("a",2.00,10.00))
+        self.factory.add_machine(Machine("b",4.00,50.00))
+        self.factory.add_machine(Machine("c",3.30,100.00))
 
         self.sWindow=QuestionWindow()
         self.pdf=PDF()
@@ -136,7 +136,8 @@ class GUI(QMainWindow, form_class):
             self.disableExecute()
         else:
             self.enableExecute()
-        for eachMachine in self.factory.machines:
+        for machine_id in self.factory.machines:
+            eachMachine = self.factory.get_machine_by_id(machine_id)
             self.hlayout = QHBoxLayout()
             self.machine = QLabel()
             self.machine.setFixedWidth(230)
@@ -176,6 +177,8 @@ class GUI(QMainWindow, form_class):
         for a in self.factory.machines:
             print(a, end=", ")
 
+        sorted_list = self.factory.get_sorted_machines_by_kwh()
+        print(sorted_list)
 
         # self.sendPDF()
 

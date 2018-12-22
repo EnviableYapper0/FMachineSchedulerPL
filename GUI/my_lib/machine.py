@@ -1,5 +1,8 @@
+import uuid
+
 class Machine(object):
     def __init__(self, name, duration, energy_consumption):
+        self.id = uuid.uuid4().node
         self.name = name
         self.duration = duration
         self.energy_consumption = energy_consumption
@@ -20,7 +23,7 @@ class Machine(object):
         return self.duration
 
     def to_fact(self):
-        attributes = [self.name, self.energy_consumption, self.duration]
+        attributes = [self.id, self.energy_consumption, self.duration]
         return "machine(" + ",".join(str(att) for att in attributes) + ")"
 
     def __str__(self):
