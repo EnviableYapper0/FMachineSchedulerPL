@@ -307,6 +307,9 @@ font: 16pt &quot;Georgia&quot;;</string>
        <height>31</height>
       </rect>
      </property>
+     <property name="styleSheet">
+      <string notr="true">color: rgb(0, 0, 0);</string>
+     </property>
     </widget>
     <widget class="QDoubleSpinBox" name="time_closeTime">
      <property name="geometry">
@@ -316,6 +319,9 @@ font: 16pt &quot;Georgia&quot;;</string>
        <width>91</width>
        <height>31</height>
       </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">color: rgb(0, 0, 0);</string>
      </property>
     </widget>
    </widget>

@@ -48,7 +48,7 @@ class GUI(QMainWindow, form_class):
         self.label_machineName.setText("Machine Name")
         self.label_machineName.setStyleSheet('font: 20 pt ".SF NS Text";color: "black"')
 
-        self.label_durationUnit.setText("Hours")
+        self.label_durationUnit.setText("H:M")
         self.label_durationUnit.setStyleSheet('font: 20 pt ".SF NS Text";color: "black"')
 
         self.label_currentUnit.setText("KW/h")
