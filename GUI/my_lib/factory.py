@@ -35,9 +35,13 @@ class Factory:
 
     def get_sorted_machines_by_peak(self):
         # Get sorted machines first then split it
-        sorted_machines = self.get_sorted_machines_by_kwh()
+        sorted_machine_dicts = self.get_sorted_machines_by_kwh()
+        sorted_machine = []
+        for m_dict in sorted_machine_dicts:
+            machine = self.machine_id_map[m_dict["id"]]
+            sorted_machine.append(machine)
         
         m_calc = mc.MachineCalculator()
-        no_peak,peak,crit_peak = m_calc.get_sorted_machines_by_peak(sorted_machines)
+        no_peak,peak,crit_peak = m_calc.get_sorted_machines_by_peak(sorted_machine)
        
         return (no_peak, peak, crit_peak)

@@ -177,8 +177,8 @@ class GUI(QMainWindow, form_class):
         for a in self.factory.machines:
             print(a, end=", ")
 
-        sorted_list = self.factory.get_sorted_machines_by_kwh()
-        print(sorted_list)
+        self.factory.get_sorted_machines_by_peak()
+        # print(sorted_list)
 
         # self.sendPDF()
 

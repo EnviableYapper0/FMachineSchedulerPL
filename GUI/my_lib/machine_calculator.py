@@ -9,11 +9,18 @@ class MachineCalculator:
         self.p = Prolog()
         self.p.consult(prolog_file_name)
 
+    def convert_machine_to_dict(self,machine_functor):
+        m_list = machine_functor.replace("machine(","").replace(")","").replace(" ","").split(",")
+        m_dict = {"id": int(m_list[0]), "duration": float(m_list[1]), "energy_consumption": float(m_list[2])}
+        return m_dict
+
+
     def readable_results(self, results, variable):
         readable = list(results)[0][variable]
         all = []
         for r in readable:
-            all.append(str(r))
+            machine_dict  = self.convert_machine_to_dict(str(r))
+            all.append(machine_dict)
         return all
 
     def machines_to_List(self, machines):
@@ -29,13 +36,15 @@ class MachineCalculator:
         # get list of machines that is sorted by kwh
         machines_str = self.machines_to_List(machines)
         result_var = "X"
-        print(machines_str)
         query_str = "machine_sort(" + machines_str + "," + result_var + ")"
         a = self.p.query(query_str)
         results = self.readable_results(a,result_var)
         return results
 
     def get_sorted_machines_by_peak(self, machines):
-        query_str = "sort_by_peak(...)"
+        no_peak_var = "NP"
+        peak_var = "P"
+        crit_peak_var = "CP"
+        query_str = "classify_machine()"
         a = self.p.query(query_str)
         print(list(a))
