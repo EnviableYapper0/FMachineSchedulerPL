@@ -103,15 +103,23 @@ class GUI(QMainWindow, form_class):
         machineName = self.text_machineName.toPlainText()
         durationTime = self.inputDuration.value()
         currentKWh = self.inputCurrent.toPlainText()
+        self.checkDuplicate= 0
 
         if machineName != "" and \
                 not machineName.isspace() and \
                 durationTime != 0 and durationTime <=24.00 and \
                 currentKWh.isnumeric():
-            self.listMachine.append(Machine(machineName, durationTime, currentKWh))
-            self.label_caution.setVisible(False)
-            self.displayMachine()
-            self.enableExecute()
+            for list in self.listMachine:
+                if list.name == machineName:
+                    self.label_caution.setText("﻿*This machine already exists")
+                    self.label_caution.setVisible(True)
+                    self.checkDuplicate=1
+                    return
+            if(self.checkDuplicate==0):
+                self.listMachine.append(Machine(machineName, durationTime, currentKWh))
+                self.label_caution.setVisible(False)
+                self.displayMachine()
+                self.enableExecute()
         else :
             self.label_caution.setVisible(True)
 
@@ -151,7 +159,7 @@ class GUI(QMainWindow, form_class):
         self.text_machineName.setPlainText("")
         self.inputDuration.setValue(0.0)
         self.inputCurrent.setPlainText("")
-        self.listWidget_machine.clear()
+        #self.listWidget_machine.clear()
 
         if(self.time_closeTime.value()!=0 and self.time_openTime.value()!=0):
             self.pdf.createPDF()
