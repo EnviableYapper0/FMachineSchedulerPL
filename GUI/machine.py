@@ -1,3 +1,4 @@
+
 class Machine(object):
     def __init__(self, name, duration, energy_consumption):
         self.name = name
