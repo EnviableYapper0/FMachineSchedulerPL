@@ -22,8 +22,11 @@ class Machine(object):
     def get_duration(self):
         return self.duration
 
+    def get_duration_minutes(self):
+        return int(self.duration) * 60 + int((self.duration - int(self.duration)) * 100)
+
     def to_fact(self):
-        attributes = [self.id, self.duration, self.energy_consumption]
+        attributes = [self.id, self.get_duration_minutes(), self.energy_consumption]
         return "machine(" + ",".join(str(att) for att in attributes) + ")"
 
     def __str__(self):
