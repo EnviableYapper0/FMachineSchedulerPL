@@ -4,6 +4,7 @@ from PyQt5.QtGui import QIcon, QPixmap
 from PyQt5.QtWidgets import *
 from QuestionWindow import QuestionWindow
 from machine import Machine
+from my_lib.machine import Machine
 from PDF import PDF
 
 form_class = uic.loadUiType("mainwindow.ui")[0]
