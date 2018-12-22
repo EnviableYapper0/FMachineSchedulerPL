@@ -12,7 +12,7 @@ form_class2 =uic.loadUiType("coverPage.ui")[0]
 class GUI(QMainWindow, form_class):
 
     def __init__(self):
-        print("enter")
+
         QMainWindow.__init__(self)
         self.setFixedSize(860,600)
         p = QtGui.QPalette()
@@ -22,13 +22,14 @@ class GUI(QMainWindow, form_class):
         p.setBrush(QtGui.QPalette.Disabled, QtGui.QPalette.Window, brush)
         self.setPalette(p)
 
+
+
         self.setupUi(self)
         self.initUI()
         self.button_addMachine.clicked.connect(self.addMachine)
         self.button_trash.clicked.connect(self.deleteMachine)
         self.button_help.clicked.connect(self.showQuery)
         self.button_Execute.clicked.connect(self.sendPDF)
-        self.button_backCover.clicked.connect(self.backCover)
         self.button_trash.setEnabled(False)
         self.button_Execute.setEnabled(False)
         self.label_caution.setVisible(False)
@@ -40,10 +41,10 @@ class GUI(QMainWindow, form_class):
 
     def initUI(self):
         self.label_openTime.setText("Factory Open Time :")
-        self.label_openTime.setStyleSheet('font: 16pt ".SF NS Text"; color: "black"')
+        self.label_openTime.setStyleSheet('font: 15pt ".SF NS Text"; color: "black"')
 
         self.label_closeTime.setText("Factory Close Time :")
-        self.label_closeTime.setStyleSheet('font: 16pt ".SF NS Text";color: "black"')
+        self.label_closeTime.setStyleSheet('font: 15pt ".SF NS Text";color: "black"')
 
         self.label_machineName.setText("Machine Name")
         self.label_machineName.setStyleSheet('font: 20 pt ".SF NS Text";color: "black"')
@@ -71,7 +72,6 @@ class GUI(QMainWindow, form_class):
 
         self.button_addMachine.setStyleSheet('border:0px')
         addbutton_GUI= QtGui.QPixmap('image/machineButton.png')
-        addbuttonPress_GUI= QtGui.QPixmap('image/machineButtonPress.png')
         self.button_addMachine.setIcon(QIcon( addbutton_GUI))
         self.button_addMachine.setIconSize(QtCore.QSize(120, 105))
         self.button_addMachine.setStyleSheet("QPushButton {background-color: transparent} QPushButton:pressed { background-color:#f36d4a}")
@@ -108,7 +108,7 @@ class GUI(QMainWindow, form_class):
         if machineName != "" and \
                 not machineName.isspace() and \
                 durationTime != 0 and durationTime <=24.00 and \
-                currentKWh.isnumeric():
+                currentKWh.isnumeric() and currentKWh != "0" :
             for list in self.listMachine:
                 if list.name == machineName:
                     self.label_caution.setText("﻿*This machine already exists")
@@ -164,10 +164,9 @@ class GUI(QMainWindow, form_class):
 
         if(self.time_closeTime.value()!=0 and self.time_openTime.value()!=0):
             self.pdf.createPDF()
-            #!!!! save to other path
-            QMessageBox.about(self,"Result","PDF File has been saved in your folder")
+            QMessageBox.information(self,"Result","PDF File has been saved in your folder")
         else :
-            QMessageBox.about(self, "Caution", "Please input the open and close time of factory")
+            QMessageBox.warning(self, "Caution", "Please input the open and close time of factory")
 
 
     def showQuery(self):
@@ -185,43 +184,14 @@ class GUI(QMainWindow, form_class):
         self.displayMachine()
         self.button_trash.setEnabled(False)
 
-    def backCover(self):
-        print("enter")
-        #QMainWindow.__init__(Cover())
-       # self.close()
 
-class Cover(QMainWindow,form_class2):
-    def __init__(self):
-        QMainWindow.__init__(self)
-        p = QtGui.QPalette()
-        #brush = QtGui.QBrush(QtCore.Qt.white, QtGui.QPixmap('image/coverpage.png'))
-        #p.setBrush(QtGui.QPalette.Active, QtGui.QPalette.Window, brush)
-       # p.setBrush(QtGui.QPalette.Inactive, QtGui.QPalette.Window, brush)
-       #p.setBrush(QtGui.QPalette.Disabled, QtGui.QPalette.Window, brush)
-        #self.setPalette(p)
-        self.setupUi(self)
 
-        self.initUI()
-
-    def initUI(self):
-        self.button_enterProgram.clicked.connect(self.enterMain)
-        self.g = GUI()
-        self.g.hide()
-        self.g.setWindowTitle('Factory Machine Scheduler')
-
-    def enterMain(self):
-
-        #QMainWindow.__init__(GUI())
-
-        self.g.show()
-        print("sss")
-        self.close()
 
 
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
-    w = Cover()
+    w = GUI()
     w.setWindowTitle('Factory Machine Scheduler')
     w.setFixedSize(860,600)
 
