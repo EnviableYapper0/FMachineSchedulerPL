@@ -17,6 +17,8 @@ def float_to_timestr(time_f):
     return str(hour) + "." + str(minute)
 
 def float_to_datetime(time_f):
+    if time_f >= 24.00:
+        return "23:59"
     t1_str = float_to_timestr(time_f)
     fmt = "%H.%M"
     return datetime.strptime(t1_str,fmt).strftime("%H:%M")

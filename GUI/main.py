@@ -69,7 +69,7 @@ class GUI(QMainWindow, form_class):
         self.label_caution.setText("﻿* Please check your input again")
         self.label_caution.setStyleSheet('color: rgb(255, 0, 10); font: 10pt ".SF NS Text";')
 
-        self.inputDuration.setRange(0,24)
+        self.inputDuration.setRange(0,23.59)
         self.time_closeTime.setRange(0,23.59)
         self.time_openTime.setRange(0, 23.59)
 
