@@ -1,15 +1,18 @@
 from datetime import datetime
 import math
+from decimal import Decimal, getcontext
 
 def float_to_minute(duration_f):
+    getcontext().prec = 2
     hour = int(duration_f)
-    minute = int(math.ceil((duration_f - int(duration_f))  * 100))
+    minute = int((Decimal(duration_f) - Decimal(int(duration_f)))  * 100)
 
     return hour * 60 + minute
 
 def float_to_timestr(time_f):
+    getcontext().prec = 2
     hour = int(time_f)
-    minute = int(math.ceil((time_f - int(time_f))  * 100))
+    minute = int((Decimal(time_f) - Decimal(int(time_f))) * 100)
 
     return str(hour) + "." + str(minute)
 
