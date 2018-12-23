@@ -33,91 +33,50 @@ class Factory:
     def get_machine_by_id(self, id):
         return self.machine_id_map[id]
 
-    def get_no_peak_minutes(self):
-        part_1 = 0
-        part_2 = 0
-
-        # case in no_peak_1
-        if (self.open_time <= self.no_peak_1[1] and self.close_time <= self.no_peak_1[1]):
-            part_1 = mt.distance_between_time_in_minute(self.close_time, self.open_time)
-            part_2 = 0
-        # case in no_peak_2
-        elif (self.open_time >= self.no_peak_2[0] and self.close_time >= self.no_peak_2[0]):
-            part_1 = 0
-            part_2 = mt.distance_between_time_in_minute(self.close_time, self.open_time)
-        # case overlap no_peak_1 and no_peak_2
-        elif (self.open_time <= self.no_peak_1[1] and self.close_time >= self.no_peak_2[0]):
-            part_1 = mt.distance_between_time_in_minute(self.no_peak_1[1],self.open_time) + 1
-            part_2 = mt.distance_between_time_in_minute(self.close_time,self.no_peak_2[0]) + 1
-        # case overlap no_peak_1 and before no_peak_2
-        elif (self.open_time <= self.no_peak_1[1] and self.close_time <= self.no_peak_2[0]):
-            part_1 = mt.distance_between_time_in_minute(self.no_peak_1[1],self.open_time)
-            part_2 = 0
-        # case before no_peak_2 and in no_peak_2
-        elif (self.open_time <= self.no_peak_2[0] and self.close_time >= self.no_peak_2[1]):
-            part_1 = 0
-            part_2 = mt.distance_between_time_in_minute(self.no_peak_2[0],self.close_time)
-
-        print("No Peak: ", part_1 + part_2)
-
-        return part_1 + part_2
-
     def get_peak_minutes(self):
-        part_1 = 0
-        part_2 = 0
+        peak_time_list = [[0.00, 9.00], [9.00, 13.30], [13.30, 15.30], [15.30, 22.00], [22.00, 24.00]]
+        found_open = False
+        found_close = False
 
-        # case before peak_1 and in peak_1
-        if (self.open_time <= self.peak_1[0] and self.close_time >= self.peak_1[0] and self.close_time <= self.peak_1[1]):
-            print("# case before peak_1 and in peak_1")
-            part_1 = mt.distance_between_time_in_minute(self.peak_1[0],self.close_time)
-            part_2 = 0
-        # case in peak_1 only
-        if (self.open_time >= self.peak_1[0] and self.close_time <= self.peak_1[1]):
-            print("# case in peak_1 only")
-            part_1 = mt.distance_between_time_in_minute(self.close_time, self.open_time)
-            part_2 = 0
-        # case in peak_2 only
-        elif (self.open_time >= self.peak_2[0] and self.close_time <= self.peak_2[1]):
-            print("# case in peak_2 only")
-            part_1 = 0
-            part_2 = mt.distance_between_time_in_minute(self.close_time, self.open_time)
-        # case before peak_1 and in peak_2
-        elif (self.open_time <= self.peak_1[0] and self.close_time >= self.peak_2[0] and self.close_time <= self.peak_2[1]):
-            print("# case before peak_1 and in peak_2")
-            part_1 = mt.distance_between_time_in_minute(self.peak_1[1], self.peak_1[0]) + 1
-            part_2 = mt.distance_between_time_in_minute(self.peak_2[0], self.close_time)
-        # case before peak_1 and before peak_2
-        elif (self.open_time <= self.peak_1[0] and self.close_time >= self.peak_1[1] and self.close_time <= self.peak_2[0]):
-            print("# case before peak_1 and before peak_2")
-            part_1 = mt.distance_between_time_in_minute(self.peak_1[1], self.peak_1[0]) + 1
-            part_2 = 0
-        # case before peak_1 and after peak_2
-        elif (self.open_time <= self.peak_1[0] and self.close_time >= self.peak_2[1]):
-            print("# case before peak_1 and after peak_2")
-            part_1 = mt.distance_between_time_in_minute(self.peak_1[1], self.peak_1[0]) + 1
-            part_2 = mt.distance_between_time_in_minute(self.peak_2[1], self.peak_2[0]) + 1
-        # case after peak_1 and in peak_2
-        elif (self.open_time >= self.peak_1[1] and self.close_time >= self.peak_2[0] and self.close_time <= self.peak_2[1]):
-            print("# case after peak_1 and in peak_2")
-            part_1 = 0
-            part_2 = mt.distance_between_time_in_minute(self.peak_2[1], self.close_time)
-        # case after peak_1 and after peak_2
-        elif(self.open_time >= self.peak_1[1] and self.close_time >= self.peak_2[1]):
-            print("# case after peak_1 and after peak_2")
-            part_1 = 0
-            part_2 = mt.distance_between_time_in_minute(self.peak_2[1],self.peak_2[0]) + 1
-        # case before peak_2 and in peak_2
-        elif(self.open_time <= self.peak_2[0] and self.close_time >= self.peak_2[0] and self.close_time <= self.peak_2[1]):
-            print("# case before peak_2 and in peak_2")
-            part_1 = 0
-            part_2 = mt.distance_between_time_in_minute(self.close_time,self.peak_2[0])
+        for i in range(0, len(peak_time_list)):
+            start_time = peak_time_list[i][0]
+            end_time = peak_time_list[i][1]
+            if self.open_time >= start_time and self.open_time <= end_time:
+                peak_time_list[i][0] = self.open_time
+                found_open = True
+            if self.close_time >= start_time and self.close_time <= end_time:
+                peak_time_list[i][1] = self.close_time
+                found_close = True
+                continue
 
-        print("Peak: ", part_1 + part_2)
+            if not found_open:
+                peak_time_list[i][0] = -1
+                peak_time_list[i][1] = -1
 
-        return part_1 + part_2
+            if found_close:
+                peak_time_list[i][0] = -1
+                peak_time_list[i][1] = -1
 
-    def get_crit_peak_minutes(self):
-        return self.crit_peak[1] - self.crit_peak[0]
+        print(peak_time_list)
+
+        no_peak_time_1 = 0
+        no_peak_time_2 = 0
+        if peak_time_list[0][0] != -1:
+            no_peak_time_1 = mt.distance_between_time_in_minute(peak_time_list[0][1],peak_time_list[0][0])
+        if peak_time_list[4][0] != -1:
+            no_peak_time_2 = mt.distance_between_time_in_minute(peak_time_list[4][1],peak_time_list[4][0])
+        total_no_peak_time = no_peak_time_1 + no_peak_time_2
+
+        peak_time_1 = 0
+        peak_time_2 = 0
+        if peak_time_list[1][0] != -1:
+            peak_time_1 = mt.distance_between_time_in_minute(peak_time_list[1][1],peak_time_list[1][0])
+        if peak_time_list[3][0] != -1:
+            peak_time_2 = mt.distance_between_time_in_minute(peak_time_list[3][1],peak_time_list[3][0])
+        total_peak_time = peak_time_1 + peak_time_2
+
+
+        return total_no_peak_time, total_peak_time
 
     def get_machine_list(self):
         machine_list = [self.get_machine_by_id(id) for id in self.machines]
@@ -136,8 +95,7 @@ class Factory:
             machine = self.machine_id_map[m_dict["id"]]
             sorted_machine.append(machine)
 
-        peak_min = self.get_peak_minutes()
-        no_peak_min = self.get_no_peak_minutes()
+        no_peak_min, peak_min = self.get_peak_minutes()
 
         print(peak_min,no_peak_min)
         
@@ -145,3 +103,7 @@ class Factory:
         no_peak,peak,crit_peak = m_calc.get_sorted_machines_by_peak(sorted_machine, peak_min, no_peak_min)
        
         return (no_peak, peak, crit_peak)
+
+    def get_time_table_list(self):
+        no_peak, peak, crit_peak = self.get_sorted_machines_by_peak()
+        return []

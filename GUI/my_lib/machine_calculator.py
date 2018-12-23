@@ -62,6 +62,10 @@ class MachineCalculator:
         peak = results[peak_var]
         crit_peak = results[crit_peak_var]
 
+        print(no_peak)
+        print(peak)
+        print(crit_peak)
+
         readable_no_peak = self.readable_results(no_peak)
         readable_peak = self.readable_results(peak)
         readable_crit_peak = self.readable_results(crit_peak)
@@ -70,4 +74,4 @@ class MachineCalculator:
         print(readable_peak)
         print(readable_crit_peak)
 
-        return no_peak,peak,crit_peak
+        return readable_no_peak,readable_peak,readable_crit_peak
