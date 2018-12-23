@@ -228,13 +228,14 @@ class GUI(QMainWindow, form_class):
         self.close_time = float(self.time_closeTime.value())
         self.open_time = float(self.time_openTime.value())
 
-        if(self.time_closeTime.value()!=0 and self.time_openTime.value()!=0 and  self.open_time < self.close_time):
+        if ( self.factory.get_operation_time() <= self.factory.get_total_machine_work_time()):
+            QMessageBox.warning(self, "Caution", "Factory operation time must be more then total of machine work time")
+        elif (self.open_time >= self.close_time):
+            QMessageBox.warning(self, "Caution", "Factory close time must be more than the open time")
+        elif(self.time_closeTime.value()!=0 and self.time_openTime.value()!=0 and  self.open_time < self.close_time):
             self.storage.saveTime(self.time_openTime.value(), self.time_closeTime.value())
             self.pdf.createPDF(time_table_list, self.factory)
             QMessageBox.information(self,"Result","PDF File has been saved in your folder")
-        elif( self.open_time >= self.close_time):
-            QMessageBox.warning(self, "Caution", "Factory close time must be more than the open time")
-
         else :
             QMessageBox.warning(self, "Caution", "Please input the open and close time of factory")
 

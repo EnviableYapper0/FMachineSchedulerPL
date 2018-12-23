@@ -11,6 +11,20 @@ class Factory:
         self.machine_id_map = {}
         self.machines = []
 
+    def get_operation_time(self):
+        print("Operation time")
+        print(mt.distance_between_time_in_minute(self.close_time,self.open_time))
+        return mt.distance_between_time_in_minute(self.close_time,self.open_time)
+
+    def get_total_machine_work_time(self):
+        print("Total machine time")
+        sum = 0
+        for id in self.machines:
+            machine = self.machine_id_map[id]
+            sum += machine.get_duration_minutes()
+        print(sum)
+        return sum
+
     def set_time(self,open_time,close_time):
         self.open_time = open_time
         self.close_time = close_time

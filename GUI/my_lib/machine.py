@@ -9,10 +9,10 @@ class Machine(object):
         self.energy_consumption = float(energy_consumption)
 
     def get_duration_str(self):
-        return str(self.duration) + " Hrs."
+        return mt.float_to_datetime(self.duration) + " H:M"
 
     def get_energy_consumption_str(self):
-        return str(self.energy_consumption) + " KW/h"
+        return str(self.energy_consumption) + " kW"
 
     def get_name(self):
         return self.name
