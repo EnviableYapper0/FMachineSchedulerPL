@@ -3,6 +3,10 @@ machine_time_less_than(machine(_,X,_), Length):-
 
 get_time(machine(_,X,_), X).
 
+classify_not_peak(L, 0, PeakLength, [], Acc, PeakList, CriticalPeakList):-
+    !,
+    classify_peak(L, PeakLength, PeakList, Acc, CriticalPeakList).
+
 classify_not_peak([H|T], NonPeakLength, PeakLength, NonPeakList, NonPeakAcc, PeakList, CritialPeakList):-
     get_time(H, X),
     machine_time_less_than(H, NonPeakLength),
@@ -22,6 +26,8 @@ classify_not_peak([machine(MID, X, KWh)|T], NonPeakLength, PeakLength, NonPeakLi
 classify_not_peak(L, _, _, NonPeakList, Acc, [], []):-
     !,
     append(Acc, L, NonPeakList).
+
+classify_peak(L, 0, [], Acc, L):- !.
 
 classify_peak([H|T], PeakLength, PeakList, PeakAcc, CritialPeakList):-
     get_time(H, X),
