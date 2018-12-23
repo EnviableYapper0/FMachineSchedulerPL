@@ -219,18 +219,18 @@ class GUI(QMainWindow, form_class):
         for a in self.factory.machines:
             # print(a, end=", ")
             pass
-        no_peak, peak, crit_peak = self.factory.get_sorted_machines_by_peak()
-        # print(sorted_list)
+        time_table_list = self.factory.get_time_table_list()
 
-        self.sendPDF(no_peak,peak,crit_peak)
 
-    def sendPDF(self,no_peak,peak,crit_peak):
+        self.sendPDF(time_table_list)
+
+    def sendPDF(self, time_table_list):
         self.close_time = float(self.time_closeTime.value())
         self.open_time = float(self.time_openTime.value())
 
         if(self.time_closeTime.value()!=0 and self.time_openTime.value()!=0 and  self.open_time < self.close_time):
             self.storage.saveTime(self.time_openTime.value(), self.time_closeTime.value())
-            self.pdf.createPDF(no_peak,peak,crit_peak,self.factory)
+            self.pdf.createPDF(time_table_list, self.factory)
             QMessageBox.information(self,"Result","PDF File has been saved in your folder")
         elif( self.open_time >= self.close_time):
             QMessageBox.warning(self, "Caution", "Factory close time must be more than the open time")

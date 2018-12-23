@@ -106,4 +106,10 @@ class Factory:
 
     def get_time_table_list(self):
         no_peak, peak, crit_peak = self.get_sorted_machines_by_peak()
-        return []
+
+        m_calc = mc.MachineCalculator()
+        time_table_list = m_calc.get_time_table(no_peak,peak,crit_peak,self.open_time)
+
+        print(time_table_list)
+
+        return time_table_list

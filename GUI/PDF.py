@@ -77,7 +77,7 @@ class PDF():
             pass
 
 
-    def createPDF(self,no_peak, peak, crit_peak, factory):
+    def createPDF(self, time_table_list, factory):
         self.date_time=datetime.now().strftime('%Y-%m-%d %H:%M:%S')
         self.pdf.add_page()
         self.pdf.set_font('Arial', 'B', 10)

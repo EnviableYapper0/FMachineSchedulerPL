@@ -1,7 +1,7 @@
 from pyswip import Prolog
 from . import machine
 from . import factory
-
+from . import my_time as mt
 
 class MachineCalculator:
 
@@ -21,6 +21,12 @@ class MachineCalculator:
         for r in results:
             machine_dict  = self.convert_machine_to_dict(str(r))
             all.append(machine_dict)
+        return all
+
+    def readable_results_list(self, results):
+        all = []
+        for r in results:
+            all.append(str(r))
         return all
 
     def machines_to_List(self, machines):
@@ -45,6 +51,7 @@ class MachineCalculator:
 
     def get_sorted_machines_by_peak(self, machines, peak_length, no_peak_length):
         machines_str = self.machines_to_List(machines)
+        print("Machines:")
         print(machines_str)
         no_peak_var = "NP"
         peak_var = "P"
@@ -62,16 +69,21 @@ class MachineCalculator:
         peak = results[peak_var]
         crit_peak = results[crit_peak_var]
 
-        print(no_peak)
-        print(peak)
-        print(crit_peak)
-
-        readable_no_peak = self.readable_results(no_peak)
-        readable_peak = self.readable_results(peak)
-        readable_crit_peak = self.readable_results(crit_peak)
-
-        print(readable_no_peak)
-        print(readable_peak)
-        print(readable_crit_peak)
+        readable_no_peak = self.readable_results_list(no_peak)
+        readable_peak = self.readable_results_list(peak)
+        readable_crit_peak = self.readable_results_list(crit_peak)
 
         return readable_no_peak,readable_peak,readable_crit_peak
+
+    def get_time_table(self, no_peak_list, peak_list, crit_peak_list, open_time):
+        # final_arrangement(L, A, B, C, CurrentTime)
+        time_table_var = "L"
+        open_time_minutes = str(mt.float_to_minute(open_time))
+        no_peak_str = str(no_peak_list).replace("'","")
+        peak_str = str(peak_list).replace("'", "")
+        crit_peak_str = str(crit_peak_list).replace("'", "")
+        query_str = "final_arrangement(" + time_table_var + "," + no_peak_str + "," + peak_str + "," + crit_peak_str + "," + open_time_minutes + ")"
+        print(query_str)
+
+
+
