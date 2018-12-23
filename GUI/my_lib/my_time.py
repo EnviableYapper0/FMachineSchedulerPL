@@ -13,6 +13,11 @@ def float_to_timestr(time_f):
 
     return str(hour) + "." + str(minute)
 
+def float_to_datetime(time_f):
+    t1_str = float_to_timestr(time_f)
+    fmt = "%H.%M"
+    return datetime.strptime(t1_str,fmt).strftime("%H:%M")
+
 def distance_between_time_in_minute(time_f1, time_f2):
     t1_str = float_to_timestr(time_f1)
     t2_str = float_to_timestr(time_f2)

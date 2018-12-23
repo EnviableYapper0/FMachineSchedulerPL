@@ -11,12 +11,6 @@ class Factory:
         self.machine_id_map = {}
         self.machines = []
 
-        self.no_peak_1 = [0.00, 8.59]
-        self.peak_1 = [9.00, 13.29]
-        self.crit_peak = [13.30, 15.29]
-        self.peak_2 = [15.30, 21.59]
-        self.no_peak_2 = [22.00, 23.59]
-
     def set_time(self,open_time,close_time):
         self.open_time = open_time
         self.close_time = close_time
@@ -118,9 +112,9 @@ class Factory:
             # kw
             machine_data[2] = float(machine_data[2])
             # start
-            machine_data[3] = mt.minutes_to_float(int(machine_data[3]))
+            machine_data[3] = mt.float_to_datetime(mt.minutes_to_float(int(machine_data[3])))
             # end
-            machine_data[4] = mt.minutes_to_float(int(machine_data[4]))
+            machine_data[4] = mt.float_to_datetime(mt.minutes_to_float(int(machine_data[4])))
 
         print(time_table_list)
 
