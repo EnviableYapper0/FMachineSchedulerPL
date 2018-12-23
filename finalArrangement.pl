@@ -19,7 +19,7 @@ arrange_nonpeak_machine(L, [machine(M, X, N)|T], Acc, B, C, CurrentTime):-
     PeakStart is 540,
     Z is PeakStart - CurrentTime,
     Z1 is X - Z,
-    append(Acc, [sorted_machine(M, Z, N, PeakStart, CurrentTime, PeakStart)], NewAcc),
+    append(Acc, [sorted_machine(M, Z, N, PeakStart, CurrentTime)], NewAcc),
     arrange_peak_machine(L, [machine(M, Z1, N)|T], NewAcc, B, C, PeakStart).
 
 arrange_peak_machine(L, A, Acc, B, C, CurrentTime):-
@@ -74,7 +74,6 @@ arrange_nonpeak_machine(L, [machine(M, X, N)|T], Acc, CurrentTime):-
     arrange_nonpeak_machine(L, T, NewAcc, NewTime).
 
 arrange_nonpeak_machine(L, [], L, _).
-    
 
 final_arrangement(L, A, B, C, CurrentTime):-
     arrange_nonpeak_machine(L, A, [], B, C, CurrentTime).
