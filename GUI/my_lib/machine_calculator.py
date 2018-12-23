@@ -15,7 +15,6 @@ class MachineCalculator:
 
         return m_dict
 
-
     def readable_results(self, results):
         all = []
         for r in results:
@@ -27,6 +26,13 @@ class MachineCalculator:
         all = []
         for r in results:
             all.append(str(r))
+        return all
+
+    def readable_time_table_list(self, unread_time_table):
+        all = []
+        for r in unread_time_table:
+            m_data_list = str(r).replace("sorted_machine(","").replace(")","").replace(" ","").split(",")
+            all.append(m_data_list)
         return all
 
     def machines_to_List(self, machines):
@@ -76,14 +82,28 @@ class MachineCalculator:
         return readable_no_peak,readable_peak,readable_crit_peak
 
     def get_time_table(self, no_peak_list, peak_list, crit_peak_list, open_time):
-        # final_arrangement(L, A, B, C, CurrentTime)
+
         time_table_var = "L"
         open_time_minutes = str(mt.float_to_minute(open_time))
         no_peak_str = str(no_peak_list).replace("'","")
         peak_str = str(peak_list).replace("'", "")
         crit_peak_str = str(crit_peak_list).replace("'", "")
+
+        # final_arrangement(L, A, B, C, CurrentTime)
         query_str = "final_arrangement(" + time_table_var + "," + no_peak_str + "," + peak_str + "," + crit_peak_str + "," + open_time_minutes + ")"
         print(query_str)
+
+        a = self.p.query(query_str)
+
+        results = list(a)[0][time_table_var]
+
+        readable_time_table = self.readable_time_table_list(results)
+
+        print("Time table:")
+        print(readable_time_table)
+
+        return readable_time_table
+
 
 
 

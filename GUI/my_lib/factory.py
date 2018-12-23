@@ -110,6 +110,18 @@ class Factory:
         m_calc = mc.MachineCalculator()
         time_table_list = m_calc.get_time_table(no_peak,peak,crit_peak,self.open_time)
 
+        for machine_data in time_table_list:
+            # name
+            machine_data[0] = self.machine_id_map[int(machine_data[0])].name
+            # duration
+            machine_data[1] = int(machine_data[1])
+            # kw
+            machine_data[2] = float(machine_data[2])
+            # start
+            machine_data[3] = mt.minutes_to_float(int(machine_data[3]))
+            # end
+            machine_data[4] = mt.minutes_to_float(int(machine_data[4]))
+
         print(time_table_list)
 
         return time_table_list

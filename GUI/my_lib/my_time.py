@@ -27,3 +27,6 @@ def distance_between_time_in_minute(time_f1, time_f2):
         diff = d1 - d2
 
     return diff.seconds // 60
+
+def minutes_to_float(minutes):
+    return (minutes // 60) + (minutes % 60)/100
