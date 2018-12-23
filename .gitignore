@@ -1,2 +1,22 @@
 
+\.idea/
+
+GUI/venv/bin/
+
+GUI/venv/lib/
+
+GUI/venv/\.DS_Store
+
+GUI/\.DS_Store
+
+\.DS_Store
+
+GUI/venv/pip-selfcheck\.json
+
+GUI/venv/pyvenv\.cfg
+
+build-Ai-GUI-Desktop_Qt_5_10_0_clang_64bit-Debug/
+
+GUI/__pycache__/
+
 __pycache__/
