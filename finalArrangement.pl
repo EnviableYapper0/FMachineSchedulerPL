@@ -35,9 +35,28 @@ arrange_critical_machine(L, A, Acc, B, [machine(M, X, N)|T], CurrentTime):-
     append(Acc, [sorted_machine(M, X, N, CurrentTime, NewTime)], NewAcc),
     arrange_critical_machine(L, A, NewAcc, B, T, NewTime).
 
-arrange_critical_machine(L, A, Acc, B ,[], CurrentTime):-
+arrange_critical_machine(L, A, Acc, B ,[], _):-
     CriticalPeakEnd is 930,
-    append([], Acc, L).
+    arrange_peak_machine2(L, A, Acc, B, CriticalPeakEnd).
+
+arrange_peak_machine2(L, A, Acc, [machine(M, X, N)|T], CurrentTime):-
+    NewTime is CurrentTime + X,
+    !,
+    append(Acc, [sorted_machine(M, X, N, CurrentTime, NewTime)], NewAcc),
+    arrange_peak_machine2(L, A, NewAcc, T, NewTime).
+
+arrange_peak_machine2(L, A, Acc, [], _):-
+    PeakEnd is 1320,
+    arrange_nonpeak_machine2(L, A, Acc, PeakEnd).
+
+arrange_nonpeak_machine2(L, [machine(M, X, N)|T], Acc, CurrentTime):-
+    NewTime is CurrentTime + X,
+    !,
+    append(Acc, [sorted_machine(M, X, N, CurrentTime, NewTime)], NewAcc),
+    arrange_nonpeak_machine2(L, T, NewAcc, NewTime).
+
+arrange_nonpeak_machine2(L, [], L, _).
+    
 
 final_arrangement(L, A, B, C, CurrentTime):-
     arrange_nonpeak_machine1(L, A, [], B, C, CurrentTime).
