@@ -12,8 +12,6 @@ from datetime import datetime
 
 
 class PDF():
-    def __init__(self):
-        self.pdf=FPDF()
 
     def convert_to_data(self, time_table):
         data = []
@@ -27,19 +25,17 @@ class PDF():
             if schedule[1] != 0:
                 data.append([name,duration,kwh,start_time,end_time])
 
-        print("Data:")
-        print(data)
-
         return data
 
-
-
     def createPDF(self, time_table_list, factory):
+        self.pdf=FPDF()
         self.date_time=datetime.now().strftime('%Y-%m-%d %H:%M:%S')
         self.pdf.add_page()
         self.pdf.set_font('Arial', 'B', 10)
 
         data = self.convert_to_data(time_table_list)
+        print("Data:")
+        print(data)
         col_width = self.pdf.w / 7
         row_height = 9
         tableHeader=['Machine Name', 'Duration', 'Energy', 'Start Time','End Time']
@@ -70,6 +66,3 @@ class PDF():
         self.filename = 'schedule'+self.date_time+'.pdf'
         print(self.filename)
         self.pdf.output(self.filename,'F')
-
-
-

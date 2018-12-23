@@ -209,18 +209,14 @@ class GUI(QMainWindow, form_class):
 
 
     def set_factory_time(self):
-        self.factory.set_time(self.time_openTime.value(), self.time_closeTime.value())
+        self.factory.set_time(float(self.time_openTime.value()), float(self.time_closeTime.value()))
 
     def calculateValue(self):
         self.text_machineName.setPlainText("")
         self.inputDuration.setValue(0.0)
         self.inputCurrent.setPlainText("")
         self.set_factory_time()
-        for a in self.factory.machines:
-            # print(a, end=", ")
-            pass
         time_table_list = self.factory.get_time_table_list()
-
 
         self.sendPDF(time_table_list)
 
@@ -228,12 +224,15 @@ class GUI(QMainWindow, form_class):
         self.close_time = float(self.time_closeTime.value())
         self.open_time = float(self.time_openTime.value())
 
+        print("open",self.open_time, "close", self.close_time)
+
         if ( self.factory.get_operation_time() <= self.factory.get_total_machine_work_time()):
             QMessageBox.warning(self, "Caution", "Factory operation time must be more then total of machine work time")
         elif (self.open_time >= self.close_time):
             QMessageBox.warning(self, "Caution", "Factory close time must be more than the open time")
         elif(self.time_closeTime.value()!=0 and self.time_openTime.value()!=0 and  self.open_time < self.close_time):
             self.storage.saveTime(self.time_openTime.value(), self.time_closeTime.value())
+            self.factory.set_time(self.open_time, self.close_time)
             self.pdf.createPDF(time_table_list, self.factory)
             QMessageBox.information(self,"Result","PDF File has been saved in your folder")
         else :
