@@ -133,6 +133,7 @@ class MachineCalculator:
             id_H = uuid.uuid4().node
             fact_H = "path( start , "+ str(id_H)+ ","+ str(cost_H)+ ")"
             print(fact_H)
+            self.uuid_map[id_H].append(("H", m))
             self.p.assertz(fact_H)
             self.generate_nodes_recur(m, id_H, "H", new_m_list, open_time, close_time)
 
@@ -141,14 +142,34 @@ class MachineCalculator:
             id_T = uuid.uuid4().node
             fact_T = "path( start , "+ str(id_T)+ ","+ str(cost_T)+ ")"
             print(fact_T)
+            self.uuid_map[id_T].append(("T", m))
             self.p.assertz(fact_T)
             self.generate_nodes_recur(m, id_T, "T", new_m_list, open_time, close_time)
 
-            print(self.uuid_map)
+        a = list(self.p.query("find_cheapest_path(X)"))[0]["X"]
+        results = self.readable_results_list(a)
+        print(results)
+        results = results[-1::-1]
+
+        path = []
+
+        for each_uuid in results:
+            if each_uuid == 'end' or each_uuid == 'start':
+                continue
+            else:
+                node = self.uuid_map[int(each_uuid)]
+                path.append(node)
+                if len(node) > 0:
+                    print(node[0][0],node[0][1])
+                else:
+                    print(node)
+
 
     def generate_nodes_recur(self, parent, parent_uuid, position, frontier, open_time, close_time):
         if len(frontier) == 0:
             print("path(", parent_uuid, ", end ,", 0, ")")
+            fact_E = "path(" + str(parent_uuid) + ", end ," + str(0) + ")"
+            self.p.assertz(fact_E)
             return
         for machine in frontier:
             new_frontier = frontier[:]
