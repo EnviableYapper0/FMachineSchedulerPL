@@ -27,7 +27,7 @@ class Machine(object):
         return mt.float_to_minute(self.duration)
 
     def to_fact(self):
-        attributes = [self.id, self.get_duration_minutes(), self.energy_consumption]
+        attributes = [self.name, self.get_duration_minutes(), self.energy_consumption]
         return "machine(" + ",".join(str(att) for att in attributes) + ")"
 
     def __str__(self):

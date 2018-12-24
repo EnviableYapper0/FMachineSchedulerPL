@@ -2,12 +2,21 @@ from pyswip import Prolog
 from . import machine
 from . import factory
 from . import my_time as mt
+from collections import defaultdict
 
+PEAK_START = 540
+CRITICAL_PEAK_START = 810
+CRITICAL_PEAK_END = 930
+PEAK_END = 1320
+
+minute_cost_table = ([1] * PEAK_START) + ([2] * (CRITICAL_PEAK_START - PEAK_START)) + ([3] * (CRITICAL_PEAK_END - CRITICAL_PEAK_START)) + ([2] * (PEAK_END - CRITICAL_PEAK_END)) + ([1] * (1440 - PEAK_END))
 class MachineCalculator:
 
     def __init__(self, prolog_file_name="my_lib/main.pl"):
         self.p = Prolog()
         self.p.consult(prolog_file_name)
+
+        self.uid_map = defaultdict(list)
 
     def convert_machine_to_dict(self,machine_functor):
         m_list = machine_functor.replace("machine(","").replace(")","").replace(" ","").split(",")
@@ -104,6 +113,45 @@ class MachineCalculator:
 
         return readable_time_table
 
+    def calculate_cost(self, start_time, end_time, kW):
+        total = 0
+        for i in range(start_time, end_time):
+            total += minute_cost_table[i]
+        return total * kW
+
+    def generate_nodes(self, machines, open_time, close_time):
+
+        start_node = machine.Machine("root_node",0,0)
+
+        for m in machines:
+            new_m_list = machines[:]
+            new_m_list.remove(m)
+
+            cost_H = self.calculate_cost(open_time, open_time + m.get_duration_minutes(),
+                                         m.get_energy_consumption())
+            print("path( A , start , H , ", m.id, ",", cost_H, ")")
+            self.generate_nodes_recur(m, "H", new_m_list, open_time, close_time)
+
+            cost_T = self.calculate_cost(close_time - m.get_duration_minutes(), close_time,
+                                         m.get_energy_consumption())
+            print("path( A , start , T , ", m.id, ",", cost_T, ")")
+            self.generate_nodes_recur(m, "T", new_m_list, open_time, close_time)
 
 
 
+    def generate_nodes_recur(self, parent, position, frontier, open_time, close_time):
+        if len(frontier) == 0:
+            print("path( end ,",position, ",", parent.to_fact(), ",", 0, ")")
+            return
+        for machine in frontier:
+            new_frontier = frontier[:]
+            new_frontier.remove(machine)
+
+            cost_H = self.calculate_cost(open_time, open_time + machine.get_duration_minutes(), machine.get_energy_consumption())
+
+            print("path(", position, ",", parent.id, ", H ,", machine.to_fact(), ",", cost_H , ")")
+            self.generate_nodes_recur(machine, "H", new_frontier[:], open_time, close_time)
+
+            cost_T = self.calculate_cost(close_time - machine.get_duration_minutes(), close_time, machine.get_energy_consumption())
+            print("path(", position, ",", parent.id, ", T ,", machine.to_fact(), ",", cost_T, ")")
+            self.generate_nodes_recur(machine, "T", new_frontier[:], open_time, close_time)

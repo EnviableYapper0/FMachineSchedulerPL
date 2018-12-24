@@ -216,10 +216,10 @@ class GUI(QMainWindow, form_class):
         self.inputDuration.setValue(0.0)
         self.inputCurrent.setPlainText("")
         self.set_factory_time()
-        time_table_list = self.factory.get_time_table_list()
+        # time_table_list = self.factory.get_time_table_list()
         self.factory.generate_nodes()
 
-        self.sendPDF(time_table_list)
+        self.sendPDF(time_table_list = 0)
 
     def sendPDF(self, time_table_list):
         self.close_time = float(self.time_closeTime.value())

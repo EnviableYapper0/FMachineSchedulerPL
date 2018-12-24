@@ -135,4 +135,5 @@ class Factory:
         return time_table_list
 
     def generate_nodes(self):
-        pass
+        m_calc = mc.MachineCalculator("my_lib/ai.pl")
+        results = m_calc.generate_nodes(self.get_machine_list(), mt.float_to_minute(self.open_time), mt.float_to_minute(self.close_time))
