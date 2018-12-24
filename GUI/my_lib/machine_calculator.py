@@ -3,6 +3,7 @@ from . import machine
 from . import factory
 from . import my_time as mt
 from collections import defaultdict
+import uuid
 
 PEAK_START = 540
 CRITICAL_PEAK_START = 810
@@ -16,7 +17,7 @@ class MachineCalculator:
         self.p = Prolog()
         self.p.consult(prolog_file_name)
 
-        self.uid_map = defaultdict(list)
+        self.uuid_map = defaultdict(list)
 
     def convert_machine_to_dict(self,machine_functor):
         m_list = machine_functor.replace("machine(","").replace(")","").replace(" ","").split(",")
@@ -129,29 +130,42 @@ class MachineCalculator:
 
             cost_H = self.calculate_cost(open_time, open_time + m.get_duration_minutes(),
                                          m.get_energy_consumption())
-            print("path( A , start , H , ", m.id, ",", cost_H, ")")
-            self.generate_nodes_recur(m, "H", new_m_list, open_time, close_time)
+            id_H = uuid.uuid4().node
+            fact_H = "path( start , "+ str(id_H)+ ","+ str(cost_H)+ ")"
+            print(fact_H)
+            self.p.assertz(fact_H)
+            self.generate_nodes_recur(m, id_H, "H", new_m_list, open_time, close_time)
 
             cost_T = self.calculate_cost(close_time - m.get_duration_minutes(), close_time,
                                          m.get_energy_consumption())
-            print("path( A , start , T , ", m.id, ",", cost_T, ")")
-            self.generate_nodes_recur(m, "T", new_m_list, open_time, close_time)
+            id_T = uuid.uuid4().node
+            fact_T = "path( start , "+ str(id_T)+ ","+ str(cost_T)+ ")"
+            print(fact_T)
+            self.p.assertz(fact_T)
+            self.generate_nodes_recur(m, id_T, "T", new_m_list, open_time, close_time)
 
+            print(self.uuid_map)
 
-
-    def generate_nodes_recur(self, parent, position, frontier, open_time, close_time):
+    def generate_nodes_recur(self, parent, parent_uuid, position, frontier, open_time, close_time):
         if len(frontier) == 0:
-            print("path( end ,",position, ",", parent.to_fact(), ",", 0, ")")
+            print("path(", parent_uuid, ", end ,", 0, ")")
             return
         for machine in frontier:
             new_frontier = frontier[:]
             new_frontier.remove(machine)
 
             cost_H = self.calculate_cost(open_time, open_time + machine.get_duration_minutes(), machine.get_energy_consumption())
-
-            print("path(", position, ",", parent.id, ", H ,", machine.to_fact(), ",", cost_H , ")")
-            self.generate_nodes_recur(machine, "H", new_frontier[:], open_time, close_time)
+            id_H = uuid.uuid4().node
+            fact_H = "path(" + str(parent_uuid) + "," + str(id_H) + "," + str(cost_H) + ")"
+            print(fact_H)
+            self.p.assertz(fact_H)
+            self.uuid_map[id_H].append(("H",machine))
+            self.generate_nodes_recur(machine, id_H, "H", new_frontier[:], open_time, close_time)
 
             cost_T = self.calculate_cost(close_time - machine.get_duration_minutes(), close_time, machine.get_energy_consumption())
-            print("path(", position, ",", parent.id, ", T ,", machine.to_fact(), ",", cost_T, ")")
-            self.generate_nodes_recur(machine, "T", new_frontier[:], open_time, close_time)
+            id_T = uuid.uuid4().node
+            fact_T = "path("+ str(parent_uuid)+ ","+ str(id_T)+ ","+ str(cost_T)+ ")"
+            print(fact_T)
+            self.p.assertz(fact_T)
+            self.uuid_map[id_T].append(("T", machine))
+            self.generate_nodes_recur(machine, id_T, "T", new_frontier[:], open_time, close_time)
