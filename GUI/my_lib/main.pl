@@ -16,7 +16,7 @@ size([H|T],N) :- size(T,N1), N is N1+1.
  *--------------------------------------*/
 
  % machine(name,minutes,kwh) <-- machine fact
- % machine(1,20,300).
+
  % machine(2,40,200).
  % machine(3,10,500).
 

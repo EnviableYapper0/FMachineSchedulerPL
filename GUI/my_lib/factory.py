@@ -133,3 +133,6 @@ class Factory:
         print(time_table_list)
 
         return time_table_list
+
+    def generate_nodes(self):
+        pass

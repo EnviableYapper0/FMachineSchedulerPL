@@ -20,3 +20,5 @@ build-Ai-GUI-Desktop_Qt_5_10_0_clang_64bit-Debug/
 GUI/__pycache__/
 
 __pycache__/
+
+*.pdf
