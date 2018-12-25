@@ -10,7 +10,15 @@ CRITICAL_PEAK_START = 810
 CRITICAL_PEAK_END = 930
 PEAK_END = 1320
 
-minute_cost_table = ([1] * PEAK_START) + ([2] * (CRITICAL_PEAK_START - PEAK_START)) + ([3] * (CRITICAL_PEAK_END - CRITICAL_PEAK_START)) + ([2] * (PEAK_END - CRITICAL_PEAK_END)) + ([1] * (1440 - PEAK_END))
+NON_PEAK_COST = 2.6107 / 60
+PEAK_COST = 3.2131 / 60
+CRITICAL_PEAK_COST = 9.1617 / 60
+
+minute_cost_table = ([NON_PEAK_COST] * PEAK_START) + \
+                    ([PEAK_COST] * (CRITICAL_PEAK_START - PEAK_START)) + \
+                    ([CRITICAL_PEAK_COST] * (CRITICAL_PEAK_END - CRITICAL_PEAK_START)) + \
+                    ([PEAK_COST] * (PEAK_END - CRITICAL_PEAK_END)) + \
+                    ([NON_PEAK_COST] * (1440 - PEAK_END))
 class MachineCalculator:
 
     def __init__(self, prolog_file_name="my_lib/main.pl"):
@@ -128,23 +136,25 @@ class MachineCalculator:
             new_m_list = machines[:]
             new_m_list.remove(m)
 
-            cost_H = self.calculate_cost(open_time, open_time + m.get_duration_minutes(),
-                                         m.get_energy_consumption())
+            head_from = open_time
+            head_to = open_time + m.get_duration_minutes()
+            cost_H = self.calculate_cost(head_from, head_to, m.get_energy_consumption())
             id_H = uuid.uuid4().node
             fact_H = "path( start , "+ str(id_H)+ ","+ str(cost_H)+ ")"
             print(fact_H)
-            self.uuid_map[id_H].append(("H", m))
+            self.uuid_map[id_H].append(("H", m, head_from, head_to))
             self.p.assertz(fact_H)
-            self.generate_nodes_recur(m, id_H, "H", new_m_list, open_time, close_time)
+            self.generate_nodes_recur(m, id_H, "H", new_m_list, head_to, close_time)
 
-            cost_T = self.calculate_cost(close_time - m.get_duration_minutes(), close_time,
-                                         m.get_energy_consumption())
+            tail_from = close_time - m.get_duration_minutes()
+            tail_to = close_time
+            cost_T = self.calculate_cost(tail_from, tail_to, m.get_energy_consumption())
             id_T = uuid.uuid4().node
             fact_T = "path( start , "+ str(id_T)+ ","+ str(cost_T)+ ")"
             print(fact_T)
-            self.uuid_map[id_T].append(("T", m))
+            self.uuid_map[id_T].append(("T", m, tail_from, tail_to))
             self.p.assertz(fact_T)
-            self.generate_nodes_recur(m, id_T, "T", new_m_list, open_time, close_time)
+            self.generate_nodes_recur(m, id_T, "T", new_m_list, open_time, tail_from)
 
         a = list(self.p.query("find_cheapest_path(X)"))[0]["X"]
         results = self.readable_results_list(a)
@@ -160,7 +170,7 @@ class MachineCalculator:
                 node = self.uuid_map[int(each_uuid)]
                 path.append(node)
                 if len(node) > 0:
-                    print(node[0][0],node[0][1])
+                    print(node[0][0],node[0][1], node[0][2], node[0][3])
                 else:
                     print(node)
 
@@ -175,18 +185,22 @@ class MachineCalculator:
             new_frontier = frontier[:]
             new_frontier.remove(machine)
 
-            cost_H = self.calculate_cost(open_time, open_time + machine.get_duration_minutes(), machine.get_energy_consumption())
+            head_from = open_time
+            head_to = open_time + machine.get_duration_minutes()
+            cost_H = self.calculate_cost(head_from, head_to, machine.get_energy_consumption())
             id_H = uuid.uuid4().node
             fact_H = "path(" + str(parent_uuid) + "," + str(id_H) + "," + str(cost_H) + ")"
             print(fact_H)
             self.p.assertz(fact_H)
-            self.uuid_map[id_H].append(("H",machine))
-            self.generate_nodes_recur(machine, id_H, "H", new_frontier[:], open_time, close_time)
+            self.uuid_map[id_H].append(("H",machine, head_from, head_to))
+            self.generate_nodes_recur(machine, id_H, "H", new_frontier[:], head_to, close_time)
 
-            cost_T = self.calculate_cost(close_time - machine.get_duration_minutes(), close_time, machine.get_energy_consumption())
+            tail_from = close_time - machine.get_duration_minutes()
+            tail_to = close_time
+            cost_T = self.calculate_cost(tail_from, tail_to, machine.get_energy_consumption())
             id_T = uuid.uuid4().node
             fact_T = "path("+ str(parent_uuid)+ ","+ str(id_T)+ ","+ str(cost_T)+ ")"
             print(fact_T)
             self.p.assertz(fact_T)
-            self.uuid_map[id_T].append(("T", machine))
-            self.generate_nodes_recur(machine, id_T, "T", new_frontier[:], open_time, close_time)
+            self.uuid_map[id_T].append(("T", machine, tail_from, tail_to))
+            self.generate_nodes_recur(machine, id_T, "T", new_frontier[:], open_time, tail_from)
