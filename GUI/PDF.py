@@ -1,14 +1,7 @@
-
-import sys
-from PyQt5 import QtCore, QtGui, uic
-from PyQt5.QtGui import QIcon, QPixmap
-from PyQt5.QtWidgets import *
-import os
-import sys
-import fpdf
-import webbrowser
 from fpdf import FPDF
 from datetime import datetime
+from my_lib.my_time import float_to_datetime
+from my_lib.my_time import minutes_to_float
 
 
 class PDF():
@@ -17,13 +10,12 @@ class PDF():
         data = []
 
         for schedule in time_table:
-            name = schedule[0]
-            duration = str(schedule[1]) + " minutes"
-            kwh = str(schedule[2]) + " kW"
-            start_time = schedule[3]
-            end_time = schedule[4]
-            if schedule[1] != 0:
-                data.append([name,duration,kwh,start_time,end_time])
+            machine = schedule[0][1]
+            start_minutes = schedule[0][2]
+            end_minutes = schedule[0][3]
+            start_time = float_to_datetime(minutes_to_float(start_minutes))
+            end_time = float_to_datetime(minutes_to_float(end_minutes))
+            data.append([machine.name, machine.get_duration_str(), machine.get_energy_consumption_str(), start_time, end_time])
 
         return data
 

@@ -85,6 +85,8 @@ class MachineCalculator:
                 else:
                     print(node)
 
+        return path
+
 
     def generate_nodes_recur(self, parent, parent_uuid, position, frontier, open_time, close_time):
         if len(frontier) == 0:
@@ -92,6 +94,7 @@ class MachineCalculator:
             fact_E = "path(" + str(parent_uuid) + ", end ," + str(0) + ")"
             self.p.assertz(fact_E)
             return
+
         for machine in frontier:
             new_frontier = frontier[:]
             new_frontier.remove(machine)

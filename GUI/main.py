@@ -217,9 +217,9 @@ class GUI(QMainWindow, form_class):
         self.inputCurrent.setPlainText("")
         self.set_factory_time()
         # time_table_list = self.factory.get_time_table_list()
-        self.factory.generate_nodes()
+        results = self.factory.generate_nodes()
 
-        self.sendPDF(time_table_list = 0)
+        self.sendPDF(results)
 
     def sendPDF(self, time_table_list):
         self.close_time = float(self.time_closeTime.value())
@@ -234,7 +234,7 @@ class GUI(QMainWindow, form_class):
         elif(self.time_closeTime.value()!=0 and self.time_openTime.value()!=0 and  self.open_time < self.close_time):
             self.storage.saveTime(self.time_openTime.value(), self.time_closeTime.value())
             self.factory.set_time(self.open_time, self.close_time)
-            # self.pdf.createPDF(time_table_list, self.factory)
+            self.pdf.createPDF(time_table_list, self.factory)
             QMessageBox.information(self,"Result","PDF File has been saved in your folder")
         else :
             QMessageBox.warning(self, "Caution", "Please input the open and close time of factory")
