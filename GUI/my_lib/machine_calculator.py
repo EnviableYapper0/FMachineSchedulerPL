@@ -63,7 +63,7 @@ class MachineCalculator:
             id_T = uuid.uuid4().node
             fact_T = "path( start , "+ str(id_T)+ ","+ str(cost_T)+ ")"
             print(fact_T)
-            self.uuid_map[id_T].append(("T", m, tail_from, tail_to))
+            self.uuid_map[id_T].append(("T", m, tail_from + 1, tail_to + 1))
             self.p.assertz(fact_T)
             self.generate_nodes_recur(m, id_T, "T", new_m_list, open_time, tail_from)
 
@@ -116,5 +116,5 @@ class MachineCalculator:
             fact_T = "path("+ str(parent_uuid)+ ","+ str(id_T)+ ","+ str(cost_T)+ ")"
             print(fact_T)
             self.p.assertz(fact_T)
-            self.uuid_map[id_T].append(("T", machine, tail_from, tail_to))
+            self.uuid_map[id_T].append(("T", machine, tail_from + 1, tail_to + 1))
             self.generate_nodes_recur(machine, id_T, "T", new_frontier[:], open_time, tail_from)
